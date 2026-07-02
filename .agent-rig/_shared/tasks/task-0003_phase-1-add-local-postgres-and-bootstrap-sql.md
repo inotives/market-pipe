@@ -2,15 +2,27 @@
 id: task-0003
 title: "Phase 1: add local Postgres and bootstrap SQL"
 type: task
-status: ready
-assigned_to: "worker"
+status: done
+assigned_to: worker
 created_by: human
 created_on: 2026-07-02
 updated_on: 2026-07-02
 priority: normal
 parent: ""
-depends_on: ["task-0001", "task-0002"]
+depends_on:
+  - task-0001
+  - task-0002
+message: "Accepted by reviewer: Docker Compose starts local Postgres with env
+  parity path, db bootstrap creates coingecko.raw_coingecko__coins_list, rerun
+  is safe, missing DB config fails clearly."
 ---
+
+
+
+
+
+
+
 
 # Task
 
@@ -62,3 +74,7 @@ Add Docker Compose local Postgres plus idempotent raw SQL bootstrap for `coingec
 - [ ] `db bootstrap` validates database config and fails clearly when missing.
 
 ## Notes
+
+Reviewer note 2026-07-02: returned to `ready`. `npm run typecheck`, `npm test`, missing-db-config CLI check, and `npm pack --dry-run` passed. Blocking fix: `compose.yaml` uses service `env_file: .env.local`, which injects the full `.env.local` into the Postgres container but does not supply values for Compose interpolation of `POSTGRES_*` or port mappings. This means `.env.local` can leak unrelated secrets into the DB container and settings such as `MARKET_PIPE__POSTGRES_PORT` are not applied unless they are also in the shell/default Compose env. Fix Compose/local-start behavior so Docker Compose uses the same `.env.local` values intentionally without injecting unrelated app secrets into Postgres.
+
+Reviewer note 2026-07-02 follow-up: service-level `env_file` leak is fixed, but `docker compose config` still shows Compose using default values from `compose.yaml`. Docker Compose does not automatically use `.env.local` for interpolation, so the task requirement remains unmet unless users pass `--env-file .env.local` or the project provides a wrapper/script documented as the local-start path. Fix the local Docker start path so the acceptance criterion "Local Postgres can start with Docker Compose from `compose.yaml`" uses the same `.env.local` values as the app.

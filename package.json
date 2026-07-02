@@ -1,0 +1,35 @@
+{
+  "name": "market-pipe",
+  "version": "0.1.0",
+  "description": "CLI-first market data ingestion for Postgres.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "market-pipe": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "sql"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json && cp src/features/coingecko/config.yaml dist/features/coingecko/config.yaml",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run build --silent && node --test tests/*.test.js",
+    "market-pipe": "npm run build --silent && node dist/cli.js",
+    "postgres:start": "docker compose up -d postgres"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "dotenv": "^16.4.5",
+    "pg": "^8.12.0",
+    "yaml": "^2.5.1"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.11.6",
+    "@types/node": "^22.10.2",
+    "typescript": "^5.5.3"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
