@@ -1,0 +1,5 @@
+endpoints:
+  - entity: coins_list
+    endpoint: /coins/list
+    table: coingecko.raw_coingecko__coins_list
+    idField: id

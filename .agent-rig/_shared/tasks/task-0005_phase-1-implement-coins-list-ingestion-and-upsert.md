@@ -2,15 +2,24 @@
 id: task-0005
 title: "Phase 1: implement coins_list ingestion and upsert"
 type: task
-status: ready
-assigned_to: "worker"
+status: done
+assigned_to: worker
 created_by: human
 created_on: 2026-07-02
 updated_on: 2026-07-02
 priority: normal
 parent: ""
-depends_on: ["task-0002", "task-0003", "task-0004"]
+depends_on:
+  - task-0002
+  - task-0003
+  - task-0004
+message: "Accepted by reviewer: required-config failure is clear, mocked fetch
+  tests pass, local Postgres ingestion upserts rows without duplicates, missing
+  rows keep deleted_at null, payload_jsonb remains raw, live smoke is opt-in."
 ---
+
+
+
 
 # Task
 

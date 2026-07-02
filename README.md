@@ -73,7 +73,7 @@ Phase 1 targets:
 
 ## Install and First Run
 
-This section describes the planned Phase 1 local flow.
+This section describes the Phase 1 local flow.
 
 Install dependencies:
 
@@ -85,6 +85,7 @@ Copy local config:
 
 ```bash
 cp .env.example .env.local
+cp .env.local .env
 ```
 
 Fill in `MARKET_PIPE__COINGECKO_API_KEY` in `.env.local`.
@@ -92,7 +93,7 @@ Fill in `MARKET_PIPE__COINGECKO_API_KEY` in `.env.local`.
 Start local Postgres:
 
 ```bash
-docker compose up -d
+npm run postgres:start
 ```
 
 Bootstrap raw tables:
@@ -106,6 +107,13 @@ Run config checks:
 ```bash
 npm run market-pipe -- config check --for db
 npm run market-pipe -- config check --for coingecko
+```
+
+Run tests:
+
+```bash
+npm test
+npm run typecheck
 ```
 
 Run the first ingestion slice:

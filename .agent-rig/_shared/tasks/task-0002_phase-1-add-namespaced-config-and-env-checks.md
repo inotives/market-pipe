@@ -2,15 +2,21 @@
 id: task-0002
 title: "Phase 1: add namespaced config and env checks"
 type: task
-status: ready
-assigned_to: "worker"
+status: done
+assigned_to: worker
 created_by: human
 created_on: 2026-07-02
 updated_on: 2026-07-02
 priority: normal
 parent: ""
-depends_on: ["task-0001"]
+depends_on:
+  - task-0001
+message: "Accepted by reviewer: env precedence tests pass, scoped config checks
+  report missing MARKET_PIPE__ vars, positive CLI config paths pass."
 ---
+
+
+
 
 # Task
 

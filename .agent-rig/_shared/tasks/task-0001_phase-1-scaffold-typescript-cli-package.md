@@ -2,15 +2,22 @@
 id: task-0001
 title: "Phase 1: scaffold TypeScript CLI package"
 type: task
-status: ready
-assigned_to: "worker"
+status: done
+assigned_to: worker
 created_by: human
 created_on: 2026-07-02
 updated_on: 2026-07-02
 priority: normal
 parent: ""
 depends_on: []
+message: "Accepted by reviewer: scaffold exposes market-pipe bin, Node engine is
+  >=22, typecheck/test/help checks pass."
 ---
+
+
+
+
+
 
 # Task
 
@@ -62,3 +69,5 @@ Create a strict TypeScript CLI scaffold that exposes the future installed comman
 - [ ] Package metadata exposes a `market-pipe` binary.
 
 ## Notes
+
+Reviewer note 2026-07-02: returned to `ready`. `npm run typecheck`, `npm test`, `npm run market-pipe -- --help`, and placeholder commands passed. Blocking fix: `package.json` currently declares `engines.node` as `>=20`, but README and `docs/project_specs.md` target Node.js 22 LTS. Align package metadata with the documented runtime target, then send back to review.

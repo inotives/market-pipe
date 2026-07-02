@@ -2,15 +2,22 @@
 id: task-0004
 title: "Phase 1: add CoinGecko coins_list metadata and validation"
 type: task
-status: ready
-assigned_to: "worker"
+status: done
+assigned_to: worker
 created_by: human
 created_on: 2026-07-02
 updated_on: 2026-07-02
 priority: normal
 parent: ""
-depends_on: ["task-0001"]
+depends_on:
+  - task-0001
+message: "Accepted by reviewer: CoinGecko config contains only coins_list,
+  metadata/idField are tested, validation accepts required fields plus extras
+  and rejects missing identity fields."
 ---
+
+
+
 
 # Task
 

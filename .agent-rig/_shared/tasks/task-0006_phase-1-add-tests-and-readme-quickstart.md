@@ -2,15 +2,26 @@
 id: task-0006
 title: "Phase 1: add tests and README quickstart"
 type: task
-status: ready
-assigned_to: "worker"
+status: done
+assigned_to: worker
 created_by: human
 created_on: 2026-07-02
 updated_on: 2026-07-02
 priority: normal
 parent: ""
-depends_on: ["task-0001", "task-0002", "task-0003", "task-0004", "task-0005"]
+depends_on:
+  - task-0001
+  - task-0002
+  - task-0003
+  - task-0004
+  - task-0005
+message: "Accepted by reviewer: README quickstart covers Phase 1 local flow,
+  env/gitignore are correct, final typecheck/test/help/binary/package checks
+  pass."
 ---
+
+
+
 
 # Task
 
