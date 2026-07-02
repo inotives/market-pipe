@@ -1,0 +1,3 @@
+# Source-owned raw tables
+
+Raw market data will land in source-owned schemas and tables, such as `coingecko.raw_coingecko__<entity>`, instead of one generic `raw_records` table. API raw tables use a shared column contract: `id`, `endpoint`, `payload_jsonb`, `created_at`, `updated_at`, and nullable `deleted_at`; each endpoint owns how `id` is derived, including payload IDs, composite IDs, or mapped IDs when no natural ID exists. Source-specific unpacking happens later in dbt staging. This adds a little Phase 1 schema work, but it keeps source-specific shape, indexing, retention, and future migrations isolated as the number of endpoints grows.
