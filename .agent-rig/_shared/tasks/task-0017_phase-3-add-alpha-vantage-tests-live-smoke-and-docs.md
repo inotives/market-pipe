@@ -2,7 +2,7 @@
 id: task-0017
 title: "Phase 3: add Alpha Vantage tests live smoke and docs"
 type: task
-status: ready
+status: done
 assigned_to: worker
 created_by: human
 created_on: 2026-07-03
@@ -11,7 +11,17 @@ priority: normal
 parent: ""
 depends_on:
   - task-0016
+message: "Accepted by reviewer: README docs now match the Phase 3/4/5 plan,
+  mocked tests cover symbol iteration, timestamp identity and quota guard
+  behavior, live Alpha Vantage smoke is opt-in with MSFT default, and
+  typecheck/default/DB-backed tests pass."
 ---
+
+
+
+
+
+
 
 # Task
 
@@ -68,3 +78,12 @@ Add final mocked tests, skipped-by-default live smoke coverage, and README/docs 
 - [ ] `npm test` passes.
 
 ## Notes
+
+Reviewer finding:
+
+- `README.md` has the Phase Plan order wrong. Lines 210-211 list Phase 4 as `dbt Transforms` and Phase 5 as `Custom CSV`, but `docs/phases/README.md` and `docs/project_specs.md` now define Phase 4 as `Custom CSV` and Phase 5 as `dbt Transforms`. Update the README phase list to match the authoritative phase docs.
+
+Reviewer verification:
+
+- `npm run typecheck` passes.
+- `npm test` passes.

@@ -15,7 +15,7 @@ const databaseParts = [
 const coingeckoRetryParts = ["MARKET_PIPE__COINGECKO_RETRY_ATTEMPTS", "MARKET_PIPE__COINGECKO_RETRY_BASE_MS"] as const;
 const coingeckoPagingParts = ["MARKET_PIPE__COINGECKO_PAGE_LIMIT", "MARKET_PIPE__COINGECKO_PER_PAGE"] as const;
 
-export type ConfigScope = "coingecko" | "db";
+export type ConfigScope = "coingecko" | "alphavantage" | "db";
 
 export type ConfigCheck = {
   ok: boolean;
@@ -46,6 +46,10 @@ export function checkConfig(scope: string, env = loadEnv()): ConfigCheck {
     const invalid = [...coingeckoRetryParts, ...coingeckoPagingParts].filter((key) => env[key] && !isPositiveInteger(env[key]));
     const missing = [...check.missing, ...invalid];
     return { ok: missing.length === 0, scope, missing };
+  }
+
+  if (scope === "alphavantage") {
+    return missingCheck(scope, env, ["MARKET_PIPE__ALPHAVANTAGE_API_KEY"]);
   }
 
   if (scope === "db") {

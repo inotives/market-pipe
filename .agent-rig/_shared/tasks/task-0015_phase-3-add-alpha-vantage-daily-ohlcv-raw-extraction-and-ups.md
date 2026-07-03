@@ -2,7 +2,7 @@
 id: task-0015
 title: "Phase 3: add Alpha Vantage daily OHLCV raw extraction and upsert"
 type: task
-status: ready
+status: done
 assigned_to: worker
 created_by: human
 created_on: 2026-07-03
@@ -11,7 +11,13 @@ priority: normal
 parent: ""
 depends_on:
   - task-0014
+message: "Accepted by reviewer: daily candles extract to one raw row per
+  symbol/date, endpoint and id shape match the plan, raw upsert is idempotent in
+  Postgres, and typecheck/default/DB-backed tests pass."
 ---
+
+
+
 
 # Task
 

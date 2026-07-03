@@ -2,7 +2,7 @@
 import { Command } from "commander";
 import { checkConfig } from "./config.js";
 import { bootstrapDatabase } from "./db.js";
-import { registerCoinGeckoCommands } from "./features/coingecko/cli.js";
+import { features } from "./features/index.js";
 
 const placeholder = (message: string) => () => {
   console.log(message);
@@ -45,7 +45,9 @@ export function createProgram(): Command {
       }
     });
 
-  registerCoinGeckoCommands(program);
+  for (const feature of features) {
+    feature.registerCommands(program);
+  }
 
   return program;
 }

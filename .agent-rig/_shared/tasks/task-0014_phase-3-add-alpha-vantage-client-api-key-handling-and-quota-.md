@@ -2,7 +2,7 @@
 id: task-0014
 title: "Phase 3: add Alpha Vantage client, API key handling, and quota guard"
 type: task
-status: ready
+status: done
 assigned_to: worker
 created_by: human
 created_on: 2026-07-03
@@ -11,7 +11,14 @@ priority: normal
 parent: ""
 depends_on:
   - task-0013
+message: "Accepted by reviewer: Alpha Vantage client builds compact
+  TIME_SERIES_DAILY requests, API-key and quota preflight failures happen before
+  HTTP, provider JSON payloads are preserved for caller handling, and
+  typecheck/default tests pass."
 ---
+
+
+
 
 # Task
 

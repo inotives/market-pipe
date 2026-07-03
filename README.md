@@ -31,7 +31,7 @@
 
 The project keeps the CLI as the primary product surface so humans, agents, systemd, cron, n8n, GitHub Actions, and other orchestrators can all run the same commands.
 
-Current status: planning and Phase 1 scaffolding.
+Current status: Phase 3 Alpha Vantage ingestion is implemented alongside Phase 2 CoinGecko ingestion.
 
 ## Core Model
 
@@ -73,7 +73,7 @@ Phase 1 targets:
 
 ## Install and First Run
 
-This section describes the current local flow through Phase 2.
+This section describes the current local flow through Phase 3.
 
 Install dependencies:
 
@@ -88,7 +88,7 @@ cp .env.example .env.local
 cp .env.local .env
 ```
 
-Fill in `MARKET_PIPE__COINGECKO_API_KEY` in `.env.local`.
+Fill in `MARKET_PIPE__COINGECKO_API_KEY` and `MARKET_PIPE__ALPHAVANTAGE_API_KEY` in `.env.local`.
 
 Start local Postgres:
 
@@ -107,6 +107,7 @@ Run config checks:
 ```bash
 npm run market-pipe -- config check --for db
 npm run market-pipe -- config check --for coingecko
+npm run market-pipe -- config check --for alphavantage
 ```
 
 Run tests:
@@ -152,6 +153,8 @@ After npm package installation, the canonical command shape is:
 market-pipe coingecko run --entity coins_list
 market-pipe coingecko run --entity coins_id_history --id bitcoin --date 01-07-2026
 market-pipe coingecko run --entity exchanges --page-limit 2 --per-page 250
+market-pipe alphavantage run --symbol MSFT
+market-pipe alphavantage run
 ```
 
 ## Configuration
@@ -163,6 +166,7 @@ Important Phase 1 variables:
 ```bash
 MARKET_PIPE__DATABASE_URL=postgres://market_pipe:market_pipe@localhost:5432/market_pipe
 MARKET_PIPE__COINGECKO_API_KEY=
+MARKET_PIPE__ALPHAVANTAGE_API_KEY=
 ```
 
 Database config resolves in this order:
@@ -180,8 +184,10 @@ Local development commands use npm's `--` argument separator:
 npm run market-pipe -- --help
 npm run market-pipe -- config check --for db
 npm run market-pipe -- config check --for coingecko
+npm run market-pipe -- config check --for alphavantage
 npm run market-pipe -- db bootstrap
 npm run market-pipe -- coingecko run --entity coins_list
+npm run market-pipe -- alphavantage run --symbol MSFT
 ```
 
 Installed package commands omit the npm wrapper:
@@ -190,32 +196,42 @@ Installed package commands omit the npm wrapper:
 market-pipe --help
 market-pipe config check --for db
 market-pipe config check --for coingecko
+market-pipe config check --for alphavantage
 market-pipe db bootstrap
 market-pipe coingecko run --entity coins_list
+market-pipe alphavantage run --symbol MSFT
 ```
 
 ## Phase Plan
 
 1. Project Skeleton
 2. CoinGecko
-3. dbt Transforms
+3. Alpha Vantage
 4. Custom CSV
-5. Alpha Vantage
+5. dbt Transforms
 6. Production Scheduling
 
 See [docs/phases/README.md](docs/phases/README.md).
 
 ## Development
 
-Phase 1 checks are planned as:
+Default checks are:
 
 ```bash
 npm test
 npm run typecheck
 ```
 
-Tests use deterministic fixtures or mocks by default. Live CoinGecko smoke runs are opt-in and require `MARKET_PIPE__COINGECKO_API_KEY`.
+Tests use deterministic fixtures or mocks by default. Live CoinGecko and Alpha Vantage smoke runs are opt-in and require API keys.
 Use a date within the past 365 days for CoinGecko demo/public API keys when running `coins_id_history`.
+
+Alpha Vantage Phase 3 notes:
+
+- `alphavantage run` without `--symbol` uses the YAML symbol list: `SPCX`, `TSM`, `MSFT`, `GOOG`, `NVDA`
+- the default configured run plans 5 Alpha Vantage requests
+- the free-tier assumption for this phase is `quota.dailyRequestLimit: 25`
+- over-quota runs fail before making API requests
+- all-symbol mode waits `rateLimit.delayMs: 15000` between symbol requests
 
 Opt-in DB-backed verification:
 
@@ -229,6 +245,24 @@ Opt-in live CoinGecko smoke:
 MARKET_PIPE__RUN_LIVE_COINGECKO=1 npm test
 ```
 
+Opt-in live Alpha Vantage smoke:
+
+```bash
+MARKET_PIPE__RUN_LIVE_ALPHAVANTAGE=1 npm test
+```
+
+The default live Alpha Vantage smoke symbol is `MSFT`. Override it only when needed:
+
+```bash
+MARKET_PIPE__RUN_LIVE_ALPHAVANTAGE=1 MARKET_PIPE__ALPHAVANTAGE_LIVE_SYMBOL=NVDA npm test
+```
+
+Manual one-symbol Alpha Vantage smoke:
+
+```bash
+npm run market-pipe -- alphavantage run --symbol MSFT
+```
+
 ## Repository Layout
 
 ```text
@@ -239,6 +273,7 @@ market-pipe/
 │   └── project_specs.md
 ├── src/
 │   └── features/
+│       ├── alphavantage/
 │       └── coingecko/
 ├── sql/
 ├── tests/

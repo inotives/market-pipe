@@ -9,6 +9,7 @@ test("prints help for the planned command tree", () => {
   assert.match(output, /config/);
   assert.match(output, /db/);
   assert.match(output, /coingecko/);
+  assert.match(output, /alphavantage/);
 });
 
 test("metadata-only CoinGecko entities fail before ingestion dispatch", () => {
