@@ -3,3 +3,56 @@ endpoints:
     endpoint: /coins/list
     table: coingecko.raw_coingecko__coins_list
     idField: id
+  - entity: asset_platforms_list
+    endpoint: /asset_platforms
+    table: coingecko.raw_coingecko__asset_platforms_list
+    idField: id
+    schedule:
+      type: daily
+      timeUtc: "00:30:00"
+  - entity: trending_search
+    endpoint: /search/trending
+    table: coingecko.raw_coingecko__trending_search
+    idField: derived
+    schedule:
+      type: daily
+      timeUtc: "01:00:00"
+  - entity: crypto_global
+    endpoint: /global
+    table: coingecko.raw_coingecko__crypto_global
+    idField: global
+    schedule:
+      type: hourly
+      minute: 10
+  - entity: derivatives_exchanges
+    endpoint: /derivatives/exchanges
+    table: coingecko.raw_coingecko__derivatives_exchanges
+    idField: id
+    schedule:
+      type: daily
+      timeUtc: "01:30:00"
+  - entity: exchanges
+    endpoint: /exchanges
+    table: coingecko.raw_coingecko__exchanges
+    idField: id
+    schedule:
+      type: daily
+      timeUtc: "02:00:00"
+  - entity: coins_categories
+    endpoint: /coins/categories
+    table: coingecko.raw_coingecko__coins_categories
+    idField: id
+    schedule:
+      type: manual
+  - entity: coins_id_history
+    endpoint: /coins/{id}/history
+    table: coingecko.raw_coingecko__coins_id_history
+    idField: coin_id:date
+    schedule:
+      type: manual
+  - entity: coins_id_ohlc
+    endpoint: /coins/{id}/ohlc
+    table: coingecko.raw_coingecko__coins_id_ohlc
+    idField: coin_id:vs_currency:days
+    schedule:
+      type: manual

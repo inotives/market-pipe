@@ -2,7 +2,7 @@
 id: task-0008
 title: "Phase 2: add shared CoinGecko request retry client"
 type: task
-status: ready
+status: done
 assigned_to: worker
 created_by: human
 created_on: 2026-07-03
@@ -11,7 +11,13 @@ priority: normal
 parent: ""
 depends_on:
   - task-0007
+message: "Accepted by reviewer: shared CoinGecko request helper retries
+  transient statuses, respects Retry-After, validates retry env vars, keeps
+  coins_list wired through the helper, and typecheck/tests pass."
 ---
+
+
+
 
 # Task
 

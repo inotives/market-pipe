@@ -12,6 +12,9 @@ const databaseParts = [
   "MARKET_PIPE__POSTGRES_PASSWORD",
 ] as const;
 
+const coingeckoRetryParts = ["MARKET_PIPE__COINGECKO_RETRY_ATTEMPTS", "MARKET_PIPE__COINGECKO_RETRY_BASE_MS"] as const;
+const coingeckoPagingParts = ["MARKET_PIPE__COINGECKO_PAGE_LIMIT", "MARKET_PIPE__COINGECKO_PER_PAGE"] as const;
+
 export type ConfigScope = "coingecko" | "db";
 
 export type ConfigCheck = {
@@ -39,7 +42,10 @@ export function loadEnv(cwd = process.cwd(), processEnv: Env = process.env): Env
 
 export function checkConfig(scope: string, env = loadEnv()): ConfigCheck {
   if (scope === "coingecko") {
-    return missingCheck(scope, env, ["MARKET_PIPE__COINGECKO_API_KEY"]);
+    const check = missingCheck(scope, env, ["MARKET_PIPE__COINGECKO_API_KEY"]);
+    const invalid = [...coingeckoRetryParts, ...coingeckoPagingParts].filter((key) => env[key] && !isPositiveInteger(env[key]));
+    const missing = [...check.missing, ...invalid];
+    return { ok: missing.length === 0, scope, missing };
   }
 
   if (scope === "db") {
@@ -75,4 +81,9 @@ export function getDatabaseUrl(env = loadEnv()): string | undefined {
 function missingCheck(scope: ConfigScope, env: Env, keys: readonly string[]): ConfigCheck {
   const missing = keys.filter((key) => !env[key]);
   return { ok: missing.length === 0, scope, missing };
+}
+
+function isPositiveInteger(value: string | undefined): boolean {
+  const parsed = Number(value);
+  return Number.isInteger(parsed) && parsed > 0;
 }

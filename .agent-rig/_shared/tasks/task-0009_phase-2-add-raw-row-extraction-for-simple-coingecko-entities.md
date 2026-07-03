@@ -2,7 +2,7 @@
 id: task-0009
 title: "Phase 2: add raw row extraction for simple CoinGecko entities"
 type: task
-status: ready
+status: done
 assigned_to: worker
 created_by: human
 created_on: 2026-07-03
@@ -11,7 +11,14 @@ priority: normal
 parent: ""
 depends_on:
   - task-0008
+message: "Accepted by reviewer: simple CoinGecko entities extract stable raw
+  ids, missing ids fail, raw tables are bootstrapped, idempotent DB-backed
+  landing passes, and typecheck/default/DB tests pass."
 ---
+
+
+
+
 
 # Task
 
@@ -64,3 +71,7 @@ Implement raw ingestion for:
 - [ ] `trending_search` stores typed rows for coins, NFTs, and categories.
 
 ## Notes
+
+Reviewer finding:
+
+- `MARKET_PIPE__RUN_DB_TESTS=1 npm test` fails because the DB-backed tests bootstrap the expanded raw table set concurrently. The failure is `duplicate key value violates unique constraint "pg_type_typname_nsp_index"` for `raw_coingecko__asset_platforms_list`, raised from `bootstrapDatabase()` while another DB test is creating the same table. The Phase 2 task requires DB-backed idempotence for raw landing, so the opt-in Postgres suite must pass reliably. Serialize DB bootstrap/tests, make bootstrap concurrency-safe, or otherwise prevent parallel `CREATE TABLE IF NOT EXISTS` races.

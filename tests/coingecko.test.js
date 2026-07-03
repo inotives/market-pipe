@@ -6,9 +6,19 @@ import { loadCoinGeckoConfig } from "../dist/features/coingecko/feature.js";
 import { validateCoinGeckoPayload } from "../dist/features/coingecko/runner.js";
 import { validateCoinsListRow } from "../dist/features/coingecko/schemas.js";
 
-test("CoinGecko config contains only coins_list metadata", () => {
+test("CoinGecko config contains Phase 2 entity metadata", () => {
   const raw = parse(readFileSync("src/features/coingecko/config.yaml", "utf8"));
-  assert.deepEqual(raw.endpoints.map((endpoint) => endpoint.entity), ["coins_list"]);
+  assert.deepEqual(raw.endpoints.map((endpoint) => endpoint.entity), [
+    "coins_list",
+    "asset_platforms_list",
+    "trending_search",
+    "crypto_global",
+    "derivatives_exchanges",
+    "exchanges",
+    "coins_categories",
+    "coins_id_history",
+    "coins_id_ohlc",
+  ]);
 
   const [coinsList] = loadCoinGeckoConfig().endpoints;
   assert.deepEqual(coinsList, {
@@ -16,6 +26,11 @@ test("CoinGecko config contains only coins_list metadata", () => {
     endpoint: "/coins/list",
     table: "coingecko.raw_coingecko__coins_list",
     idField: "id",
+  });
+
+  assert.deepEqual(raw.endpoints.find((endpoint) => endpoint.entity === "crypto_global").schedule, {
+    type: "hourly",
+    minute: 10,
   });
 });
 
