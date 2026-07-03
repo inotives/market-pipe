@@ -426,19 +426,21 @@ Acceptance:
 - Live smoke run is opt-in.
 - Raw rows land idempotently.
 
-### Phase 3 - dbt Transforms
+### Phase 3 - Alpha Vantage
 
 Deliverables:
 
-- dbt project under `transforms/`.
-- Staging models for CoinGecko entities.
-- Reference marts for coins and asset platforms.
-- `pnpm market-pipe transform run` wrapper around dbt.
+- `alphavantage` source module.
+- CLI command: `pnpm market-pipe alphavantage run`.
+- Configured symbols list.
+- Daily OHLCV ingestion.
+- API-key based request handling.
 
 Acceptance:
 
-- `pnpm market-pipe transform run` builds from loaded raw data.
-- dbt tests catch null keys and duplicate grains.
+- Mocked tests cover symbol iteration and timestamp identity.
+- Re-running the same day skips duplicates.
+- dbt staging grain is `symbol, observed_at, interval`.
 
 ### Phase 4 - Custom CSV
 
@@ -456,21 +458,19 @@ Acceptance:
 - Raw rows land idempotently.
 - dbt staging models expose stable symbols, timestamps, and OHLCV values.
 
-### Phase 5 - Alpha Vantage
+### Phase 5 - dbt Transforms
 
 Deliverables:
 
-- `alphavantage` source module.
-- CLI command: `pnpm market-pipe alphavantage run`.
-- Configured symbols list.
-- Daily OHLCV ingestion.
-- API-key based request handling.
+- dbt project under `transforms/`.
+- Staging models for CoinGecko entities.
+- Reference marts for coins and asset platforms.
+- `pnpm market-pipe transform run` wrapper around dbt.
 
 Acceptance:
 
-- Mocked tests cover symbol iteration and timestamp identity.
-- Re-running the same day skips duplicates.
-- dbt staging grain is `symbol, observed_at, interval`.
+- `pnpm market-pipe transform run` builds from loaded raw data.
+- dbt tests catch null keys and duplicate grains.
 
 ### Future Source Expansion
 

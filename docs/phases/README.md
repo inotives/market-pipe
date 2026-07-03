@@ -8,9 +8,9 @@ The phase docs are not worker tickets. They define project sequencing, scope bou
 
 1. [Project Skeleton](phase-01-project-skeleton.md)
 2. [CoinGecko](phase-02-coingecko.md)
-3. [dbt Transforms](phase-03-dbt-transforms.md)
+3. [Alpha Vantage](phase-03-alpha-vantage.md)
 4. [Custom CSV](phase-04-custom-csv.md)
-5. [Alpha Vantage](phase-05-alpha-vantage.md)
+5. [dbt Transforms](phase-05-dbt-transforms.md)
 6. [Production Scheduling](phase-06-production-scheduling.md)
 
 ## Planning Rules
