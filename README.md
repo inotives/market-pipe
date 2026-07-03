@@ -73,7 +73,7 @@ Phase 1 targets:
 
 ## Install and First Run
 
-This section describes the Phase 1 local flow.
+This section describes the current local flow through Phase 2.
 
 Install dependencies:
 
@@ -116,16 +116,42 @@ npm test
 npm run typecheck
 ```
 
-Run the first ingestion slice:
+Run the basic ingestion slice:
 
 ```bash
 npm run market-pipe -- coingecko run --entity coins_list
+```
+
+Run Phase 2 simple entities:
+
+```bash
+npm run market-pipe -- coingecko run --entity asset_platforms_list
+npm run market-pipe -- coingecko run --entity trending_search
+npm run market-pipe -- coingecko run --entity crypto_global
+npm run market-pipe -- coingecko run --entity derivatives_exchanges
+npm run market-pipe -- coingecko run --entity exchanges
+npm run market-pipe -- coingecko run --entity coins_categories
+```
+
+Run parameterized entities:
+
+```bash
+npm run market-pipe -- coingecko run --entity coins_id_history --id bitcoin --date 01-07-2026
+npm run market-pipe -- coingecko run --entity coins_id_ohlc --id bitcoin --vs-currency usd --days 30
+```
+
+Pagination is supported only for `exchanges` and `derivatives_exchanges`. Override the defaults only when needed:
+
+```bash
+npm run market-pipe -- coingecko run --entity exchanges --page-limit 2 --per-page 250
 ```
 
 After npm package installation, the canonical command shape is:
 
 ```bash
 market-pipe coingecko run --entity coins_list
+market-pipe coingecko run --entity coins_id_history --id bitcoin --date 01-07-2026
+market-pipe coingecko run --entity exchanges --page-limit 2 --per-page 250
 ```
 
 ## Configuration
@@ -188,7 +214,20 @@ npm test
 npm run typecheck
 ```
 
-Tests should use deterministic fixtures or mocks by default. Live CoinGecko smoke runs are opt-in and require `MARKET_PIPE__COINGECKO_API_KEY`.
+Tests use deterministic fixtures or mocks by default. Live CoinGecko smoke runs are opt-in and require `MARKET_PIPE__COINGECKO_API_KEY`.
+Use a date within the past 365 days for CoinGecko demo/public API keys when running `coins_id_history`.
+
+Opt-in DB-backed verification:
+
+```bash
+MARKET_PIPE__RUN_DB_TESTS=1 npm test
+```
+
+Opt-in live CoinGecko smoke:
+
+```bash
+MARKET_PIPE__RUN_LIVE_COINGECKO=1 npm test
+```
 
 ## Repository Layout
 

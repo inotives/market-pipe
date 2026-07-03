@@ -2,7 +2,7 @@
 id: task-0011
 title: "Phase 2: add CoinGecko pagination support"
 type: task
-status: ready
+status: done
 assigned_to: worker
 created_by: human
 created_on: 2026-07-03
@@ -11,7 +11,14 @@ priority: normal
 parent: ""
 depends_on:
   - task-0010
+message: "Accepted by reviewer: pagination is limited to documented paginated
+  entities, defaults and CLI/env overrides are validated, non-paginated entities
+  reject pagination flags, multi-page fetches are bounded, and
+  typecheck/default/DB tests pass."
 ---
+
+
+
 
 # Task
 

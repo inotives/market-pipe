@@ -49,6 +49,28 @@ test("config checks name missing variables", () => {
   ]);
 });
 
+test("config checks CoinGecko retry values", () => {
+  assert.deepEqual(
+    checkConfig("coingecko", {
+      MARKET_PIPE__COINGECKO_API_KEY: "demo",
+      MARKET_PIPE__COINGECKO_RETRY_ATTEMPTS: "0",
+      MARKET_PIPE__COINGECKO_RETRY_BASE_MS: "nope",
+    }).missing,
+    ["MARKET_PIPE__COINGECKO_RETRY_ATTEMPTS", "MARKET_PIPE__COINGECKO_RETRY_BASE_MS"],
+  );
+});
+
+test("config checks CoinGecko paging values", () => {
+  assert.deepEqual(
+    checkConfig("coingecko", {
+      MARKET_PIPE__COINGECKO_API_KEY: "demo",
+      MARKET_PIPE__COINGECKO_PAGE_LIMIT: "0",
+      MARKET_PIPE__COINGECKO_PER_PAGE: "-1",
+    }).missing,
+    ["MARKET_PIPE__COINGECKO_PAGE_LIMIT", "MARKET_PIPE__COINGECKO_PER_PAGE"],
+  );
+});
+
 test("database url wins over split postgres fields", () => {
   assert.equal(getDatabaseUrl({ MARKET_PIPE__DATABASE_URL: "postgres://existing" }), "postgres://existing");
 });

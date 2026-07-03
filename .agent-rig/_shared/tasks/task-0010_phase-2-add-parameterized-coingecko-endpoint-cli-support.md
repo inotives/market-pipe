@@ -2,7 +2,7 @@
 id: task-0010
 title: "Phase 2: add parameterized CoinGecko endpoint CLI support"
 type: task
-status: ready
+status: done
 assigned_to: worker
 created_by: human
 created_on: 2026-07-03
@@ -11,7 +11,13 @@ priority: normal
 parent: ""
 depends_on:
   - task-0009
+message: "Accepted by reviewer: parameterized CoinGecko endpoints validate
+  required params before fetch, build documented URLs, produce stable composite
+  raw ids, bootstrap their raw tables, and typecheck/default/DB tests pass."
 ---
+
+
+
 
 # Task
 

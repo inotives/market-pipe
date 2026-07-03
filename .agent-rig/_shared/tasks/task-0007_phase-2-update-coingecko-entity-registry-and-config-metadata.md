@@ -2,7 +2,7 @@
 id: task-0007
 title: "Phase 2: update CoinGecko entity registry and config metadata"
 type: task
-status: ready
+status: done
 assigned_to: worker
 created_by: human
 created_on: 2026-07-03
@@ -11,7 +11,14 @@ priority: normal
 parent: ""
 depends_on:
   - task-0006
+message: "Accepted by reviewer: Phase 2 CoinGecko metadata is present, schedule
+  intent is metadata-only, metadata-only entities now fail before ingestion
+  dispatch, and typecheck/tests pass."
 ---
+
+
+
+
 
 # Task
 
@@ -71,3 +78,7 @@ Expand the CoinGecko entity metadata so Phase 2 endpoints are known to the featu
 - [ ] TypeScript check passes.
 
 ## Notes
+
+Reviewer finding:
+
+- `src/features/coingecko/cli.ts` now resolves every Phase 2 entity through `getCoinGeckoEndpoint(entity)`, but still always calls `runCoinsList()`. This means `market-pipe coingecko run --entity exchanges` would run the `coins_list` ingestion and report it as `exchanges`. Keep new entities as metadata-only until their handlers exist, or dispatch only implemented entities and fail clearly for metadata-only entities.
