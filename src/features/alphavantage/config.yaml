@@ -1,0 +1,16 @@
+quota:
+  dailyRequestLimit: 25
+rateLimit:
+  delayMs: 15000
+symbols:
+  - SPCX
+  - TSM
+  - MSFT
+  - GOOG
+  - NVDA
+endpoints:
+  - entity: daily
+    function: TIME_SERIES_DAILY
+    outputsize: compact
+    table: alphavantage.raw_alphavantage__daily_stock_ohlcv
+    idField: symbol:observed_at

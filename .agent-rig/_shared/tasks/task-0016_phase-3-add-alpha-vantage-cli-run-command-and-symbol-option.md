@@ -2,7 +2,7 @@
 id: task-0016
 title: "Phase 3: add Alpha Vantage CLI run command and symbol option"
 type: task
-status: ready
+status: done
 assigned_to: worker
 created_by: human
 created_on: 2026-07-03
@@ -11,7 +11,14 @@ priority: normal
 parent: ""
 depends_on:
   - task-0015
+message: "Accepted by reviewer: alphavantage run CLI is registered with
+  --symbol, single-symbol and YAML-loop execution are covered by mocked tests,
+  quota preflight and configured delay behavior are verified, and
+  typecheck/default tests pass."
 ---
+
+
+
 
 # Task
 

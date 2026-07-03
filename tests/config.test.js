@@ -40,6 +40,7 @@ test(".env is loaded for Compose parity", () => {
 
 test("config checks name missing variables", () => {
   assert.deepEqual(checkConfig("coingecko", {}).missing, ["MARKET_PIPE__COINGECKO_API_KEY"]);
+  assert.deepEqual(checkConfig("alphavantage", {}).missing, ["MARKET_PIPE__ALPHAVANTAGE_API_KEY"]);
   assert.deepEqual(checkConfig("db", {}).missing, [
     "MARKET_PIPE__POSTGRES_HOST",
     "MARKET_PIPE__POSTGRES_PORT",

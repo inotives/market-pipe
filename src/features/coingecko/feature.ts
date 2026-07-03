@@ -1,7 +1,9 @@
 import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { type Command } from "commander";
 import { parse } from "yaml";
+import { registerCoinGeckoCommands } from "./cli.js";
 
 export type CoinGeckoEndpoint = {
   entity:
@@ -49,3 +51,10 @@ export function getCoinGeckoEndpoint(entity: string): CoinGeckoEndpoint {
 
   return endpoint;
 }
+
+export const coingeckoFeature = {
+  slug: "coingecko",
+  registerCommands(program: Command): void {
+    registerCoinGeckoCommands(program);
+  },
+};

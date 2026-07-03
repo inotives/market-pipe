@@ -12,7 +12,7 @@
     "sql"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json && cp src/features/coingecko/config.yaml dist/features/coingecko/config.yaml",
+    "build": "tsc -p tsconfig.json && cp src/features/coingecko/config.yaml dist/features/coingecko/config.yaml && cp src/features/alphavantage/config.yaml dist/features/alphavantage/config.yaml",
     "typecheck": "tsc --noEmit",
     "test": "npm run build --silent && node --test tests/*.test.js",
     "market-pipe": "npm run build --silent && node dist/cli.js",
