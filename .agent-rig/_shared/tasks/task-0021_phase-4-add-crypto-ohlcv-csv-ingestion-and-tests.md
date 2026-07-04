@@ -2,16 +2,18 @@
 id: task-0021
 title: "Phase 4: add crypto OHLCV CSV ingestion and tests"
 type: task
-status: ready
+status: done
 assigned_to: worker
 created_by: human
 created_on: 2026-07-03
-updated_on: 2026-07-03
+updated_on: 2026-07-04
 priority: normal
 parent: ""
 depends_on:
   - task-0020
 ---
+
+
 
 # Task
 
@@ -64,3 +66,11 @@ Implement parsing, validation, row id construction, and raw upsert for crypto OH
 - [ ] `npm test` passes.
 
 ## Notes
+
+Reviewer accepted on 2026-07-04.
+
+- Bitcoin and Ethereum fixture-shaped rows parse and validate, including BOM-prefixed headers.
+- Raw rows include configured `asset` metadata and land in `custom_csv.raw_custom_csv__crypto_ohlcv`.
+- `npm run typecheck` passed.
+- `npm test` passed: 51 passed, 12 skipped.
+- `MARKET_PIPE__RUN_DB_TESTS=1 npm test` passed with local Postgres access: 61 passed, 2 skipped.

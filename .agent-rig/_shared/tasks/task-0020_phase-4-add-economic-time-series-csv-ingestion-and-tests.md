@@ -2,16 +2,19 @@
 id: task-0020
 title: "Phase 4: add economic time-series CSV ingestion and tests"
 type: task
-status: ready
+status: done
 assigned_to: worker
 created_by: human
 created_on: 2026-07-03
-updated_on: 2026-07-03
+updated_on: 2026-07-04
 priority: normal
 parent: ""
 depends_on:
   - task-0019
 ---
+
+
+
 
 # Task
 
@@ -71,3 +74,26 @@ Implement parsing, validation, row id construction, and raw upsert for economic 
 - [ ] `npm test` passes.
 
 ## Notes
+
+Reviewer returned on 2026-07-04.
+
+Finding:
+
+- `src/features/custom_csv/parser.ts:50` maps CSV body lines through `toRow(...)` without passing the physical row number, so malformed rows with the wrong column count fail with `CSV row has 1 columns; expected 2` instead of a useful row number. This misses the task requirement that invalid rows fail with useful row numbers. Repro: `observation_date,PPIACO\n2024-01-01\n`.
+
+Recommendation:
+
+- Pass `index + 2` from `parseConfiguredCsv` into `toRow`, and include it in the column-count error, for example `CSV row 2 has 1 columns; expected 2`. Add a default parser test for a short or long row.
+
+Checks run:
+
+- `npm run typecheck` passed.
+- `npm test` passed: 48 passed, 11 skipped.
+- `MARKET_PIPE__RUN_DB_TESTS=1 npm test` passed with local Postgres access: 57 passed, 2 skipped.
+
+Reviewer accepted on 2026-07-04 after fix.
+
+- Column-count parser errors now include the physical CSV row number and have a default test.
+- `npm run typecheck` passed.
+- `npm test` passed: 49 passed, 11 skipped.
+- `MARKET_PIPE__RUN_DB_TESTS=1 npm test` passed with local Postgres access: 58 passed, 2 skipped.

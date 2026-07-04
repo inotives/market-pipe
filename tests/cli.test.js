@@ -10,6 +10,7 @@ test("prints help for the planned command tree", () => {
   assert.match(output, /db/);
   assert.match(output, /coingecko/);
   assert.match(output, /alphavantage/);
+  assert.match(output, /custom-csv/);
 });
 
 test("metadata-only CoinGecko entities fail before ingestion dispatch", () => {
@@ -29,4 +30,29 @@ test("pagination flags fail on entities that do not support them", () => {
 
   assert.equal(result.status, 1);
   assert.match(result.stderr, /does not support pagination/);
+});
+
+test("custom-csv run requires --entity", () => {
+  const result = spawnSync("node", ["dist/cli.js", "custom-csv", "run", "--file", "/tmp/demo.csv"], { encoding: "utf8" });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /required option '--entity <entity>' not specified/);
+});
+
+test("custom-csv run requires --file", () => {
+  const result = spawnSync("node", ["dist/cli.js", "custom-csv", "run", "--entity", "PPIACO"], { encoding: "utf8" });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /required option '--file <path>' not specified/);
+});
+
+test("custom-csv run rejects remote URLs clearly", () => {
+  const result = spawnSync(
+    "node",
+    ["dist/cli.js", "custom-csv", "run", "--entity", "PPIACO", "--file", "https://example.com/PPIACO.csv"],
+    { encoding: "utf8" },
+  );
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /only supports local filesystem paths/);
 });

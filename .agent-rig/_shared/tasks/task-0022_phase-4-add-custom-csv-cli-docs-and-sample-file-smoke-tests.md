@@ -2,16 +2,19 @@
 id: task-0022
 title: "Phase 4: add Custom CSV CLI docs and sample-file smoke tests"
 type: task
-status: ready
+status: done
 assigned_to: worker
 created_by: human
 created_on: 2026-07-03
-updated_on: 2026-07-03
+updated_on: 2026-07-04
 priority: normal
 parent: ""
 depends_on:
   - task-0021
 ---
+
+
+
 
 # Task
 
@@ -61,3 +64,31 @@ Add `market-pipe custom-csv run`, README/docs updates, and default sample-file s
 - [ ] `npm test` passes.
 
 ## Notes
+
+Reviewer returned on 2026-07-04.
+
+Finding:
+
+- `README.md:34` and `README.md:76` still describe the project/local flow as Phase 3 even though this task adds Phase 4 Custom CSV CLI support and README usage. This contradicts the new Custom CSV section and makes the docs stale.
+
+Recommendation:
+
+- Update those README status/setup sentences to include Phase 4 Custom CSV. Keep it minimal; no broader README rewrite needed.
+
+Checks run:
+
+- `npm run typecheck` passed.
+- `npm test` passed: 54 passed, 12 skipped.
+- `MARKET_PIPE__RUN_DB_TESTS=1 npm test` passed with local Postgres access: 64 passed, 2 skipped.
+- Live CLI test passed against local Postgres and local public CSV files:
+  - `CORESTICKM159SFRBATL`: 701 rows
+  - `PPIACO`: 1361 rows
+  - `bitcoin_historical_ohlcv`: 398 rows with `asset = bitcoin`
+  - `ethereum_historical_ohlcv`: 398 rows with `asset = ethereum`
+
+Reviewer accepted on 2026-07-04 after README status fix.
+
+- README now describes the current flow/status through Phase 4.
+- `npm run typecheck` passed.
+- `npm test` passed: 54 passed, 12 skipped.
+- `MARKET_PIPE__RUN_DB_TESTS=1 npm test` passed with local Postgres access: 64 passed, 2 skipped.
