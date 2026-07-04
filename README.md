@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="License.md"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-white?style=for-the-badge&labelColor=000000"></a>
-  <a href="docs/project_specs.md"><img alt="Status: planning" src="https://img.shields.io/badge/status-planning-white?style=for-the-badge&labelColor=000000"></a>
+  <a href="docs/project_specs.md"><img alt="Status: active" src="https://img.shields.io/badge/status-active-white?style=for-the-badge&labelColor=000000"></a>
   <img alt="Runtime: TypeScript CLI" src="https://img.shields.io/badge/runtime-typescript%20cli-white?style=for-the-badge&labelColor=000000">
   <img alt="Database: Postgres" src="https://img.shields.io/badge/database-postgres-white?style=for-the-badge&labelColor=000000">
 </p>
@@ -31,19 +31,22 @@
 
 The project keeps the CLI as the primary product surface so humans, agents, systemd, cron, n8n, GitHub Actions, and other orchestrators can all run the same commands.
 
-Current status: Phase 4 Custom CSV ingestion is implemented alongside Phase 3 Alpha Vantage and Phase 2 CoinGecko ingestion.
+Implemented sources currently include CoinGecko, Alpha Vantage, and Custom CSV.
 
 ## Core Model
 
-Raw API data lands in source-owned schemas and tables, not one generic raw table.
+Raw data lands in source-owned schemas and tables, not one generic raw table.
 
-Phase 1 starts with CoinGecko `coins_list`:
+Examples:
 
 ```text
 coingecko.raw_coingecko__coins_list
+alphavantage.raw_alphavantage__daily_stock_ohlcv
+custom_csv.raw_custom_csv__economic_time_series
+custom_csv.raw_custom_csv__crypto_ohlcv
 ```
 
-Raw API tables use this contract:
+API raw tables use this contract:
 
 ```text
 id
@@ -58,22 +61,7 @@ For `coins_list`, `id` is the CoinGecko coin ID. Daily runs update the same row 
 
 JSON unpacking belongs in dbt staging later, not raw ingestion.
 
-## Dependencies
-
-Phase 1 targets:
-
-- Node.js 22 LTS
-- npm
-- TypeScript
-- Postgres
-- Docker Compose for local Postgres
-- `commander` for CLI parsing
-- `yaml` for source config
-- Node's built-in test runner
-
 ## Install and First Run
-
-This section describes the current local flow through Phase 4.
 
 Install dependencies:
 
@@ -119,15 +107,10 @@ npm test
 npm run typecheck
 ```
 
-Run the basic ingestion slice:
+Run CoinGecko entities:
 
 ```bash
 npm run market-pipe -- coingecko run --entity coins_list
-```
-
-Run Phase 2 simple entities:
-
-```bash
 npm run market-pipe -- coingecko run --entity asset_platforms_list
 npm run market-pipe -- coingecko run --entity trending_search
 npm run market-pipe -- coingecko run --entity crypto_global
@@ -164,7 +147,7 @@ market-pipe custom-csv run --entity PPIACO --file data/csv/PPIACO.csv
 
 Environment variables use the `MARKET_PIPE__*` prefix to avoid collisions.
 
-Important Phase 1 variables:
+Important variables:
 
 ```bash
 MARKET_PIPE__DATABASE_URL=postgres://market_pipe:market_pipe@localhost:5432/market_pipe
@@ -209,12 +192,21 @@ market-pipe custom-csv run --entity PPIACO --file data/csv/PPIACO.csv
 
 ## Custom CSV
 
-Phase 4 adds four configured local-file entities:
+Custom CSV has four configured local-file entities:
 
 - `CORESTICKM159SFRBATL`
 - `PPIACO`
 - `bitcoin_historical_ohlcv`
 - `ethereum_historical_ohlcv`
+
+Download the source CSV files from these pages:
+
+- FRED data:
+  - Core CPI: https://fred.stlouisfed.org/series/CORESTICKM159SFRBATL
+  - PPI: https://fred.stlouisfed.org/series/PPIACO
+- Crypto OHLCV:
+  - Bitcoin: https://coinmarketcap.com/currencies/bitcoin/historical-data/
+  - Ethereum: https://coinmarketcap.com/currencies/ethereum/historical-data/
 
 Run them through the CLI with explicit local paths:
 
@@ -265,11 +257,11 @@ npm run typecheck
 Tests use deterministic fixtures or mocks by default. Live CoinGecko and Alpha Vantage smoke runs are opt-in and require API keys. Custom CSV fixture smoke tests run by default with temporary local files.
 Use a date within the past 365 days for CoinGecko demo/public API keys when running `coins_id_history`.
 
-Alpha Vantage Phase 3 notes:
+Alpha Vantage notes:
 
 - `alphavantage run` without `--symbol` uses the YAML symbol list: `SPCX`, `TSM`, `MSFT`, `GOOG`, `NVDA`
 - the default configured run plans 5 Alpha Vantage requests
-- the free-tier assumption for this phase is `quota.dailyRequestLimit: 25`
+- the free-tier assumption is `quota.dailyRequestLimit: 25`
 - over-quota runs fail before making API requests
 - all-symbol mode waits `rateLimit.delayMs: 15000` between symbol requests
 
@@ -314,7 +306,8 @@ market-pipe/
 ├── src/
 │   └── features/
 │       ├── alphavantage/
-│       └── coingecko/
+│       ├── coingecko/
+│       └── custom_csv/
 ├── sql/
 ├── tests/
 ├── compose.yaml
@@ -322,8 +315,6 @@ market-pipe/
 ├── License.md
 └── README.md
 ```
-
-Some implementation paths are planned and may not exist until Phase 1 tasks are completed.
 
 ## License
 
