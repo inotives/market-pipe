@@ -2,16 +2,18 @@
 id: task-0019
 title: "Phase 4: add Custom CSV bootstrap schema and raw tables"
 type: task
-status: ready
+status: done
 assigned_to: worker
 created_by: human
 created_on: 2026-07-03
-updated_on: 2026-07-03
+updated_on: 2026-07-04
 priority: normal
 parent: ""
 depends_on:
   - task-0018
 ---
+
+
 
 # Task
 
@@ -65,3 +67,9 @@ Add bootstrap SQL and DB bootstrap tests for the Custom CSV schema and raw table
 - [ ] `npm test` passes.
 
 ## Notes
+
+Reviewer accepted on 2026-07-04.
+
+- `npm run typecheck` passed.
+- `npm test` passed: 45 passed, 8 skipped.
+- `MARKET_PIPE__RUN_DB_TESTS=1 npm test` passed with local Postgres access: 51 passed, 2 skipped.

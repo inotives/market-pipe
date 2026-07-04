@@ -1,0 +1,65 @@
+entities:
+  - entity: CORESTICKM159SFRBATL
+    table: custom_csv.raw_custom_csv__economic_time_series
+    parser: economic_time_series
+    delimiter: ","
+    expectedHeaders:
+      - observation_date
+      - CORESTICKM159SFRBATL
+    idFields:
+      - entity
+      - observation_date
+  - entity: PPIACO
+    table: custom_csv.raw_custom_csv__economic_time_series
+    parser: economic_time_series
+    delimiter: ","
+    expectedHeaders:
+      - observation_date
+      - PPIACO
+    idFields:
+      - entity
+      - observation_date
+  - entity: bitcoin_historical_ohlcv
+    table: custom_csv.raw_custom_csv__crypto_ohlcv
+    parser: crypto_ohlcv
+    asset: bitcoin
+    delimiter: ";"
+    expectedHeaders:
+      - timeOpen
+      - timeClose
+      - timeHigh
+      - timeLow
+      - name
+      - open
+      - high
+      - low
+      - close
+      - volume
+      - marketCap
+      - circulatingSupply
+      - timestamp
+    idFields:
+      - entity
+      - timestamp
+  - entity: ethereum_historical_ohlcv
+    table: custom_csv.raw_custom_csv__crypto_ohlcv
+    parser: crypto_ohlcv
+    asset: ethereum
+    delimiter: ";"
+    expectedHeaders:
+      - timeOpen
+      - timeClose
+      - timeHigh
+      - timeLow
+      - name
+      - open
+      - high
+      - low
+      - close
+      - volume
+      - marketCap
+      - circulatingSupply
+      - timestamp
+    idFields:
+      - entity
+      - timestamp

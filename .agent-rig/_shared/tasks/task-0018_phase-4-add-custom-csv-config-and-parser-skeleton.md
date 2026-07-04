@@ -2,15 +2,17 @@
 id: task-0018
 title: "Phase 4: add Custom CSV config and parser skeleton"
 type: task
-status: ready
+status: done
 assigned_to: worker
 created_by: human
 created_on: 2026-07-03
-updated_on: 2026-07-03
+updated_on: 2026-07-04
 priority: normal
 parent: ""
 depends_on: []
 ---
+
+
 
 # Task
 
@@ -74,3 +76,8 @@ Add the Custom CSV feature skeleton, YAML config, and parser skeleton for config
 - [ ] `npm test` passes.
 
 ## Notes
+
+Reviewer accepted on 2026-07-04.
+
+- `npm run typecheck` passed.
+- `npm test` passed: 45 passed, 8 skipped.

@@ -31,7 +31,7 @@
 
 The project keeps the CLI as the primary product surface so humans, agents, systemd, cron, n8n, GitHub Actions, and other orchestrators can all run the same commands.
 
-Current status: Phase 3 Alpha Vantage ingestion is implemented alongside Phase 2 CoinGecko ingestion.
+Current status: Phase 4 Custom CSV ingestion is implemented alongside Phase 3 Alpha Vantage and Phase 2 CoinGecko ingestion.
 
 ## Core Model
 
@@ -73,7 +73,7 @@ Phase 1 targets:
 
 ## Install and First Run
 
-This section describes the current local flow through Phase 3.
+This section describes the current local flow through Phase 4.
 
 Install dependencies:
 
@@ -109,6 +109,8 @@ npm run market-pipe -- config check --for db
 npm run market-pipe -- config check --for coingecko
 npm run market-pipe -- config check --for alphavantage
 ```
+
+Custom CSV does not require an API key. It uses explicit local files passed with `--file`.
 
 Run tests:
 
@@ -155,6 +157,7 @@ market-pipe coingecko run --entity coins_id_history --id bitcoin --date 01-07-20
 market-pipe coingecko run --entity exchanges --page-limit 2 --per-page 250
 market-pipe alphavantage run --symbol MSFT
 market-pipe alphavantage run
+market-pipe custom-csv run --entity PPIACO --file data/csv/PPIACO.csv
 ```
 
 ## Configuration
@@ -188,6 +191,7 @@ npm run market-pipe -- config check --for alphavantage
 npm run market-pipe -- db bootstrap
 npm run market-pipe -- coingecko run --entity coins_list
 npm run market-pipe -- alphavantage run --symbol MSFT
+npm run market-pipe -- custom-csv run --entity PPIACO --file data/csv/PPIACO.csv
 ```
 
 Installed package commands omit the npm wrapper:
@@ -200,7 +204,43 @@ market-pipe config check --for alphavantage
 market-pipe db bootstrap
 market-pipe coingecko run --entity coins_list
 market-pipe alphavantage run --symbol MSFT
+market-pipe custom-csv run --entity PPIACO --file data/csv/PPIACO.csv
 ```
+
+## Custom CSV
+
+Phase 4 adds four configured local-file entities:
+
+- `CORESTICKM159SFRBATL`
+- `PPIACO`
+- `bitcoin_historical_ohlcv`
+- `ethereum_historical_ohlcv`
+
+Run them through the CLI with explicit local paths:
+
+```bash
+npm run market-pipe -- custom-csv run --entity CORESTICKM159SFRBATL --file data/csv/CORESTICKM159SFRBATL.csv
+npm run market-pipe -- custom-csv run --entity PPIACO --file data/csv/PPIACO.csv
+npm run market-pipe -- custom-csv run --entity bitcoin_historical_ohlcv --file data/csv/bitcoin-historical-ohlcv.csv
+npm run market-pipe -- custom-csv run --entity ethereum_historical_ohlcv --file data/csv/ethereum-historical-ohlcv.csv
+```
+
+Installed package form:
+
+```bash
+market-pipe custom-csv run --entity CORESTICKM159SFRBATL --file data/csv/CORESTICKM159SFRBATL.csv
+market-pipe custom-csv run --entity PPIACO --file data/csv/PPIACO.csv
+market-pipe custom-csv run --entity bitcoin_historical_ohlcv --file data/csv/bitcoin-historical-ohlcv.csv
+market-pipe custom-csv run --entity ethereum_historical_ohlcv --file data/csv/ethereum-historical-ohlcv.csv
+```
+
+Behavior notes:
+
+- `--entity` is required.
+- `--file` is required.
+- Only local filesystem paths are supported; remote URLs are rejected.
+- `custom_csv` row ids are stable by configured `idFields`, not by file path.
+- Re-running the same file or a moved file updates the same raw row ids instead of duplicating them.
 
 ## Phase Plan
 
@@ -222,7 +262,7 @@ npm test
 npm run typecheck
 ```
 
-Tests use deterministic fixtures or mocks by default. Live CoinGecko and Alpha Vantage smoke runs are opt-in and require API keys.
+Tests use deterministic fixtures or mocks by default. Live CoinGecko and Alpha Vantage smoke runs are opt-in and require API keys. Custom CSV fixture smoke tests run by default with temporary local files.
 Use a date within the past 365 days for CoinGecko demo/public API keys when running `coins_id_history`.
 
 Alpha Vantage Phase 3 notes:
