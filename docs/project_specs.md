@@ -129,10 +129,10 @@ The CLI is the product. Everything else exists to support it.
 Every source must be runnable from the command line:
 
 ```bash
-pnpm market-pipe coingecko run --entities coins_list global coins_markets
-pnpm market-pipe custom-csv run --file ./data/prices.csv --entity ohlcv
-pnpm market-pipe alphavantage run --symbols AAPL MSFT NVDA --interval 1d
-pnpm market-pipe transform run
+npm run market-pipe -- coingecko run --entities coins_list global coins_markets
+npm run market-pipe -- custom-csv run --file ./data/prices.csv --entity ohlcv
+npm run market-pipe -- alphavantage run --symbols AAPL MSFT NVDA --interval 1d
+npm run market-pipe -- transform run
 ```
 
 Schedulers call CLI commands. Source logic must not know whether it was started manually, by cron, or by systemd.
@@ -323,9 +323,9 @@ Example hourly script:
 set -euo pipefail
 
 cd /opt/market-pipe
-pnpm market-pipe coingecko run --entities global global_defi coins_markets
-pnpm market-pipe alphavantage run --symbols AAPL MSFT NVDA --interval 1d
-pnpm market-pipe transform run
+npm run market-pipe -- coingecko run --entities global global_defi coins_markets
+npm run market-pipe -- alphavantage run --symbols AAPL MSFT NVDA --interval 1d
+npm run market-pipe -- transform run
 ```
 
 Example daily script:
@@ -335,10 +335,10 @@ Example daily script:
 set -euo pipefail
 
 cd /opt/market-pipe
-pnpm market-pipe coingecko run --entities coins_list asset_platforms_list
-pnpm market-pipe custom-csv run --file ./data/ohlcv.csv --entity ohlcv
-pnpm market-pipe alphavantage run --symbols AAPL MSFT NVDA --interval 1d
-pnpm market-pipe transform run
+npm run market-pipe -- coingecko run --entities coins_list asset_platforms_list
+npm run market-pipe -- custom-csv run --file ./data/ohlcv.csv --entity ohlcv
+npm run market-pipe -- alphavantage run --symbols AAPL MSFT NVDA --interval 1d
+npm run market-pipe -- transform run
 ```
 
 Start with two schedules:
@@ -393,7 +393,7 @@ This keeps the project scheduler-agnostic: systemd now, n8n later, no app rewrit
 Deliverables:
 
 - TypeScript project with strict compiler settings.
-- `pnpm market-pipe --help`.
+- `npm run market-pipe -- --help`.
 - Config loading from environment variables.
 - Postgres connection helper.
 - Raw table bootstrap SQL.
@@ -402,7 +402,7 @@ Deliverables:
 Acceptance:
 
 - `pnpm test` passes.
-- `pnpm market-pipe db bootstrap` creates raw tables.
+- `npm run market-pipe -- db bootstrap` creates raw tables.
 - A test can insert and skip a duplicate raw record.
 
 ### Phase 2 - CoinGecko
@@ -410,7 +410,7 @@ Acceptance:
 Deliverables:
 
 - `coingecko` source module.
-- CLI command: `pnpm market-pipe coingecko run`.
+- CLI command: `npm run market-pipe -- coingecko run`.
 - Entities:
   - `coins_list`
   - `asset_platforms_list`
@@ -431,7 +431,7 @@ Acceptance:
 Deliverables:
 
 - `alphavantage` source module.
-- CLI command: `pnpm market-pipe alphavantage run`.
+- CLI command: `market-pipe alphavantage run`.
 - Configured symbols list.
 - Daily OHLCV ingestion.
 - API-key based request handling.
@@ -447,7 +447,7 @@ Acceptance:
 Deliverables:
 
 - `custom_csv` source module.
-- CLI command: `pnpm market-pipe custom-csv run`.
+- CLI command: `market-pipe custom-csv run`.
 - File input via `--file`.
 - Entity input via `--entity`.
 - Basic column mapping for OHLCV-style CSV files.
@@ -458,18 +458,35 @@ Acceptance:
 - Raw rows land idempotently.
 - dbt staging models expose stable symbols, timestamps, and OHLCV values.
 
-### Phase 5 - dbt Transforms
+### Phase 5 - Agent Local Datastore
+
+Deliverables:
+
+- `agent_local` source module.
+- SQLite reader for project-local `.agent-pipe/data/local.sqlite` files.
+- Configured project/entity mappings.
+- Raw table: `agent_local.raw_agent_local__records`.
+- CLI command: `market-pipe agent-local run`.
+
+Acceptance:
+
+- One local SQLite row lands as one warehouse raw row.
+- Project identity prevents collisions across repositories.
+- Same entity names in different projects do not collide.
+- Re-running the same local records updates existing raw rows instead of duplicating.
+
+### Phase 6 - dbt Transforms
 
 Deliverables:
 
 - dbt project under `transforms/`.
 - Staging models for CoinGecko entities.
 - Reference marts for coins and asset platforms.
-- `pnpm market-pipe transform run` wrapper around dbt.
+- `market-pipe transform run` wrapper around dbt.
 
 Acceptance:
 
-- `pnpm market-pipe transform run` builds from loaded raw data.
+- `market-pipe transform run` builds from loaded raw data.
 - dbt tests catch null keys and duplicate grains.
 
 ### Future Source Expansion
@@ -479,6 +496,7 @@ The first supported features are:
 - `coingecko`: API source.
 - `custom_csv`: file source.
 - `alphavantage`: API source.
+- `agent_local`: SQLite source.
 
 Future features should fit the same registry contract:
 
@@ -498,7 +516,7 @@ Adding a future source should usually mean:
 
 Do not add provider-specific conditionals to root CLI code.
 
-### Phase 6 - Production Scheduling
+### Phase 7 - Production Scheduling
 
 Deliverables:
 
@@ -621,9 +639,9 @@ This order proves the production path early instead of spending the first week b
 The new project is successful when:
 
 - A fresh machine can install dependencies and bootstrap raw tables from docs.
-- `pnpm market-pipe coingecko run` loads raw rows.
-- `pnpm market-pipe transform run` builds useful models.
-- `pnpm market-pipe coingecko run --entities asset_platforms_list --transform` ingests raw rows and runs the related dbt staging, intermediate, and mart models.
+- `npm run market-pipe -- coingecko run` loads raw rows.
+- `npm run market-pipe -- transform run` builds useful models.
+- `npm run market-pipe -- coingecko run --entities asset_platforms_list --transform` ingests raw rows and runs the related dbt staging, intermediate, and mart models.
 - systemd runs hourly and daily jobs without Prefect.
 - Re-running jobs skips duplicates instead of mutating raw data.
 - The codebase remains small enough that adding a source means editing one source file, one CLI registration, and optional dbt models.

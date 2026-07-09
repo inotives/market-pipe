@@ -11,6 +11,7 @@ test("prints help for the planned command tree", () => {
   assert.match(output, /coingecko/);
   assert.match(output, /alphavantage/);
   assert.match(output, /custom-csv/);
+  assert.match(output, /agent-local/);
 });
 
 test("metadata-only CoinGecko entities fail before ingestion dispatch", () => {
@@ -55,4 +56,47 @@ test("custom-csv run rejects remote URLs clearly", () => {
 
   assert.equal(result.status, 1);
   assert.match(result.stderr, /only supports local filesystem paths/);
+});
+
+test("agent-local run requires either --project or --all", () => {
+  const result = spawnSync("node", ["dist/cli.js", "agent-local", "run"], { encoding: "utf8" });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /requires exactly one of --project or --all/);
+});
+
+test("agent-local run rejects --project with --all", () => {
+  const result = spawnSync("node", ["dist/cli.js", "agent-local", "run", "--project", "agent-pipe", "--all"], { encoding: "utf8" });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /requires exactly one of --project or --all/);
+});
+
+test("agent-local run rejects unknown configured projects before sqlite access", () => {
+  const result = spawnSync("node", ["dist/cli.js", "agent-local", "run", "--project", "unknown-project"], { encoding: "utf8" });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Unsupported Agent Local project: unknown-project/);
+});
+
+test("agent-local run accepts --project with --entity", () => {
+  const result = spawnSync(
+    "node",
+    ["dist/cli.js", "agent-local", "run", "--project", "agent-pipe", "--entity", "rates"],
+    { encoding: "utf8", env: { ...process.env, MARKET_PIPE__AGENT_LOCAL_SQLITE_PATH: "/tmp/missing.sqlite" } },
+  );
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Agent Local SQLite file does not exist:/);
+});
+
+test("agent-local run accepts --all", () => {
+  const result = spawnSync(
+    "node",
+    ["dist/cli.js", "agent-local", "run", "--all"],
+    { encoding: "utf8", env: { ...process.env, MARKET_PIPE__AGENT_LOCAL_SQLITE_PATH: "/tmp/missing.sqlite" } },
+  );
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Agent Local SQLite file does not exist:/);
 });

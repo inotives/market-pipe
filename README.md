@@ -31,7 +31,7 @@
 
 The project keeps the CLI as the primary product surface so humans, agents, systemd, cron, n8n, GitHub Actions, and other orchestrators can all run the same commands.
 
-Implemented sources currently include CoinGecko, Alpha Vantage, and Custom CSV.
+Implemented sources currently include CoinGecko, Alpha Vantage, Custom CSV, and Agent Local.
 
 ## Core Model
 
@@ -44,6 +44,7 @@ coingecko.raw_coingecko__coins_list
 alphavantage.raw_alphavantage__daily_stock_ohlcv
 custom_csv.raw_custom_csv__economic_time_series
 custom_csv.raw_custom_csv__crypto_ohlcv
+agent_pipe.raw_local__records
 ```
 
 API raw tables use this contract:
@@ -141,6 +142,7 @@ market-pipe coingecko run --entity exchanges --page-limit 2 --per-page 250
 market-pipe alphavantage run --symbol MSFT
 market-pipe alphavantage run
 market-pipe custom-csv run --entity PPIACO --file data/csv/PPIACO.csv
+market-pipe agent-local run --project agent-pipe
 ```
 
 ## Configuration
@@ -175,6 +177,7 @@ npm run market-pipe -- db bootstrap
 npm run market-pipe -- coingecko run --entity coins_list
 npm run market-pipe -- alphavantage run --symbol MSFT
 npm run market-pipe -- custom-csv run --entity PPIACO --file data/csv/PPIACO.csv
+npm run market-pipe -- agent-local run --project agent-pipe
 ```
 
 Installed package commands omit the npm wrapper:
@@ -188,6 +191,7 @@ market-pipe db bootstrap
 market-pipe coingecko run --entity coins_list
 market-pipe alphavantage run --symbol MSFT
 market-pipe custom-csv run --entity PPIACO --file data/csv/PPIACO.csv
+market-pipe agent-local run --project agent-pipe
 ```
 
 ## Custom CSV
@@ -234,14 +238,49 @@ Behavior notes:
 - `custom_csv` row ids are stable by configured `idFields`, not by file path.
 - Re-running the same file or a moved file updates the same raw row ids instead of duplicating them.
 
+## Agent Local
+
+Agent Local syncs canonical `agent-pipe` SQLite `records` rows into project-owned Postgres raw tables.
+
+Current configured project:
+
+- `agent-pipe` -> `agent_pipe.raw_local__records`
+
+Local development can point `market-pipe` at the live fixture with `MARKET_PIPE__AGENT_LOCAL_SQLITE_PATH`:
+
+```bash
+MARKET_PIPE__AGENT_LOCAL_SQLITE_PATH=/Users/inotives/workspaces/agent-pipe/.agent-pipe/data/local.sqlite \
+  npm run market-pipe -- agent-local run --project agent-pipe
+```
+
+Filter to one entity:
+
+```bash
+npm run market-pipe -- agent-local run --project agent-pipe --entity rates
+```
+
+Run all configured projects:
+
+```bash
+npm run market-pipe -- agent-local run --all
+```
+
+Behavior notes:
+
+- Pass exactly one of `--project` or `--all`.
+- `--entity` filters `records.entity`; it is not a config allow-list.
+- Unknown projects fail before SQLite is opened.
+- Re-running the same SQLite rows updates the same raw ids instead of duplicating them.
+
 ## Phase Plan
 
 1. Project Skeleton
 2. CoinGecko
 3. Alpha Vantage
 4. Custom CSV
-5. dbt Transforms
-6. Production Scheduling
+5. Agent Local Datastore
+6. dbt Transforms
+7. Production Scheduling
 
 See [docs/phases/README.md](docs/phases/README.md).
 
@@ -269,6 +308,14 @@ Opt-in DB-backed verification:
 
 ```bash
 MARKET_PIPE__RUN_DB_TESTS=1 npm test
+```
+
+Opt-in live Agent Local acceptance:
+
+```bash
+MARKET_PIPE__RUN_DB_TESTS=1 \
+MARKET_PIPE__AGENT_LOCAL_SQLITE_PATH=/Users/inotives/workspaces/agent-pipe/.agent-pipe/data/local.sqlite \
+npm test
 ```
 
 Opt-in live CoinGecko smoke:
@@ -306,6 +353,7 @@ market-pipe/
 ├── src/
 │   └── features/
 │       ├── alphavantage/
+│       ├── agent_local/
 │       ├── coingecko/
 │       └── custom_csv/
 ├── sql/

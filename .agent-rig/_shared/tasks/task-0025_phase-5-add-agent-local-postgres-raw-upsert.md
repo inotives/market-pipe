@@ -2,7 +2,7 @@
 id: task-0025
 title: "Phase 5: add Agent Local Postgres raw table upsert"
 type: task
-status: ready
+status: done
 assigned_to: worker
 created_by: human
 created_on: 2026-07-09
@@ -12,6 +12,9 @@ parent: ""
 depends_on:
   - task-0024
 ---
+
+
+
 
 # Task
 
@@ -64,4 +67,5 @@ Create and upsert Agent Local raw records into the correct Postgres project sche
 - [ ] `npm test` passes.
 
 ## Notes
-
+- Reviewer 2026-07-09: returned to ready. `tests/agent-local-ingestion.test.js` idempotence test assumes `agent_pipe.raw_local__records` already exists and issues `delete from agent_pipe.raw_local__records ...` before the first `runAgentLocal` call. On a clean database this table is absent because `bootstrapDatabase()` only runs static bootstrap SQL and does not create Agent Local dynamic tables. Fix the test so it establishes the table itself, or make cleanup conditional on table existence, then rerun DB-backed verification.
+- Reviewer 2026-07-09: accepted after re-review. The DB tests now start from `drop schema if exists agent_pipe cascade`, and `MARKET_PIPE__RUN_DB_TESTS=1 npm test` passes against local Postgres, including Agent Local create, rerun idempotence, payload/metadata update, and soft-delete passthrough coverage.

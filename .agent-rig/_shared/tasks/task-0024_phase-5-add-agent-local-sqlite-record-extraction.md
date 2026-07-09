@@ -2,7 +2,7 @@
 id: task-0024
 title: "Phase 5: add Agent Local SQLite records extraction"
 type: task
-status: ready
+status: done
 assigned_to: worker
 created_by: human
 created_on: 2026-07-09
@@ -12,6 +12,8 @@ parent: ""
 depends_on:
   - task-0023
 ---
+
+
 
 # Task
 
@@ -64,4 +66,4 @@ Read and validate `records` rows from a configured Agent Local SQLite database.
 - [ ] `npm test` passes.
 
 ## Notes
-
+- Reviewer: accepted on 2026-07-09. SQLite extraction, validation failures, project/entity filtering, duplicate detection, `npm run typecheck`, and `npm test` all verified locally.
