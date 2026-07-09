@@ -464,8 +464,8 @@ Deliverables:
 
 - `agent_local` source module.
 - SQLite reader for project-local `.agent-pipe/data/local.sqlite` files.
-- Configured project/entity mappings.
-- Raw table: `agent_local.raw_agent_local__records`.
+- Configured project entries.
+- Project-owned raw tables, such as `agent_pipe.raw_local__records`.
 - CLI command: `market-pipe agent-local run`.
 
 Acceptance:
@@ -480,14 +480,18 @@ Acceptance:
 Deliverables:
 
 - dbt project under `transforms/`.
-- Staging models for CoinGecko entities.
-- Reference marts for coins and asset platforms.
-- `market-pipe transform run` wrapper around dbt.
+- CoinGecko-only first slice for `coins_list` and `asset_platforms_list`.
+- Staging views in the `staging` schema.
+- Reference mart views in the `marts` schema.
+- Project-local profile generation from `MARKET_PIPE__DATABASE_URL`.
+- Direct dbt commands plus thin `market-pipe transform profile`, `run`, and `test` helpers.
 
 Acceptance:
 
-- `market-pipe transform run` builds from loaded raw data.
-- dbt tests catch null keys and duplicate grains.
+- Direct `dbt run` and `dbt test` work with `--project-dir transforms --profiles-dir transforms/.dbt`.
+- `market-pipe transform run` and `market-pipe transform test` shell out to dbt with the same project-local profile.
+- dbt tests catch null keys and duplicate grains for present rows.
+- Empty raw tables do not fail dbt tests.
 
 ### Future Source Expansion
 

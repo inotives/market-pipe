@@ -79,6 +79,8 @@ cp .env.local .env
 
 Fill in `MARKET_PIPE__COINGECKO_API_KEY` and `MARKET_PIPE__ALPHAVANTAGE_API_KEY` in `.env.local`.
 
+For Agent Local live testing, also set `MARKET_PIPE__AGENT_LOCAL_SQLITE_PATH` to the local `agent-pipe` datastore path.
+
 Start local Postgres:
 
 ```bash
@@ -100,6 +102,8 @@ npm run market-pipe -- config check --for alphavantage
 ```
 
 Custom CSV does not require an API key. It uses explicit local files passed with `--file`.
+
+Agent Local does not require an API key. It reads a configured SQLite `records` table and can use `MARKET_PIPE__AGENT_LOCAL_SQLITE_PATH` to point at a live local datastore.
 
 Run tests:
 
@@ -133,6 +137,13 @@ Pagination is supported only for `exchanges` and `derivatives_exchanges`. Overri
 npm run market-pipe -- coingecko run --entity exchanges --page-limit 2 --per-page 250
 ```
 
+Run Agent Local against the live `agent-pipe` datastore:
+
+```bash
+MARKET_PIPE__AGENT_LOCAL_SQLITE_PATH=/Users/inotives/workspaces/agent-pipe/.agent-pipe/data/local.sqlite \
+  npm run market-pipe -- agent-local run --project agent-pipe
+```
+
 After npm package installation, the canonical command shape is:
 
 ```bash
@@ -155,6 +166,7 @@ Important variables:
 MARKET_PIPE__DATABASE_URL=postgres://market_pipe:market_pipe@localhost:5432/market_pipe
 MARKET_PIPE__COINGECKO_API_KEY=
 MARKET_PIPE__ALPHAVANTAGE_API_KEY=
+MARKET_PIPE__AGENT_LOCAL_SQLITE_PATH=/path/to/project/.agent-pipe/data/local.sqlite
 ```
 
 Database config resolves in this order:

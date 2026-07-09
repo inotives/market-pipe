@@ -23,3 +23,19 @@ The repository or workspace that owns an agent local datastore, such as `crypto-
 ### Agent Local Entity
 
 A record family inside an agent local project's canonical `records` table, such as `rates`, `notes`, `tickers`, or `daily_ohlcv`. Entity names are local to a project.
+
+### Raw
+
+Source-owned records landed by ingestion modules with source payloads preserved for later transformation.
+
+### Staging Model
+
+A dbt model that lightly shapes raw source records into stable, typed columns while preserving source-level grain.
+
+### Intermediate Model
+
+A dbt model that holds reusable transform logic shared by multiple downstream models. Intermediate models are introduced only when shared logic exists.
+
+### Mart
+
+A dbt model intended for direct analytical use, such as a reference dimension or fact table.
