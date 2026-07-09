@@ -2,7 +2,7 @@
 id: task-0027
 title: "Phase 5: add Agent Local live fixture acceptance"
 type: task
-status: ready
+status: done
 assigned_to: worker
 created_by: human
 created_on: 2026-07-09
@@ -12,6 +12,8 @@ parent: ""
 depends_on:
   - task-0026
 ---
+
+
 
 # Task
 
@@ -61,4 +63,4 @@ Add opt-in live acceptance coverage that syncs the full local `agent-pipe` datas
 - [ ] Opt-in DB/live test passes when local Postgres and the live fixture are available.
 
 ## Notes
-
+- Reviewer: accepted on 2026-07-09. Verified default `npm test` skips the live fixture test, and `MARKET_PIPE__RUN_DB_TESTS=1 MARKET_PIPE__AGENT_LOCAL_SQLITE_PATH=/Users/inotives/workspaces/agent-pipe/.agent-pipe/data/local.sqlite npm test` passes against local Postgres and the real Agent Local fixture.

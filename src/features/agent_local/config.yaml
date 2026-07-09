@@ -1,0 +1,4 @@
+projects:
+  - projectId: agent-pipe
+    projectName: Agent Pipe
+    sqlitePath: .agent-pipe/data/local.sqlite

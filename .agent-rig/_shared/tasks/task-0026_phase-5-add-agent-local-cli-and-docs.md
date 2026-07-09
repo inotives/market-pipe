@@ -2,7 +2,7 @@
 id: task-0026
 title: "Phase 5: add Agent Local CLI and docs"
 type: task
-status: ready
+status: done
 assigned_to: worker
 created_by: human
 created_on: 2026-07-09
@@ -12,6 +12,8 @@ parent: ""
 depends_on:
   - task-0025
 ---
+
+
 
 # Task
 
@@ -66,4 +68,4 @@ Expose Agent Local ingestion through `market-pipe agent-local run` and document 
 - [ ] `npm test` passes.
 
 ## Notes
-
+- Reviewer: accepted on 2026-07-09. Verified CLI registration, `--project`/`--all` validation, unknown-project failure, README Agent Local usage/docs, `npm run typecheck`, and `npm test`.

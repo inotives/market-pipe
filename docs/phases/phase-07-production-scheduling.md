@@ -1,4 +1,4 @@
-# Phase 6 - Production Scheduling
+# Phase 7 - Production Scheduling
 
 ## Purpose
 
@@ -35,4 +35,3 @@ Scheduling should not introduce a second execution path.
 - Which commands belong in hourly versus daily scripts?
 - Should production use compiled JavaScript or `tsx`?
 - What is the minimum log format needed before adding alerting?
-
