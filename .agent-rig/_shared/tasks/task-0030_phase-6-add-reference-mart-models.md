@@ -2,16 +2,19 @@
 id: task-0030
 title: "Phase 6: add CoinGecko reference mart models"
 type: task
-status: ready
+status: done
 assigned_to: worker
 created_by: human
 created_on: 2026-07-09
-updated_on: 2026-07-09
+updated_on: 2026-07-10
 priority: normal
 parent: ""
 depends_on:
   - task-0029
 ---
+
+
+
 
 # Task
 
@@ -60,4 +63,3 @@ Add mart views for CoinGecko coins and asset platforms.
 - [ ] `npm test` passes.
 
 ## Notes
-

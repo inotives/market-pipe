@@ -2,15 +2,18 @@
 id: task-0028
 title: "Phase 6: add dbt project scaffold and profile docs"
 type: task
-status: ready
+status: done
 assigned_to: worker
 created_by: human
 created_on: 2026-07-09
-updated_on: 2026-07-09
+updated_on: 2026-07-10
 priority: normal
 parent: ""
 depends_on: []
 ---
+
+
+
 
 # Task
 
@@ -62,4 +65,3 @@ Create the minimal `transforms/` dbt project scaffold and document the external 
 - [ ] `npm test` passes.
 
 ## Notes
-

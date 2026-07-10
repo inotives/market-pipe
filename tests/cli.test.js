@@ -12,6 +12,17 @@ test("prints help for the planned command tree", () => {
   assert.match(output, /alphavantage/);
   assert.match(output, /custom-csv/);
   assert.match(output, /agent-local/);
+  assert.match(output, /transform/);
+});
+
+test("transform profile fails clearly when database config is missing", () => {
+  const result = spawnSync("node", ["dist/cli.js", "transform", "profile"], {
+    encoding: "utf8",
+    env: { ...process.env, MARKET_PIPE__DATABASE_URL: "" },
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Missing transform config: MARKET_PIPE__DATABASE_URL/);
 });
 
 test("metadata-only CoinGecko entities fail before ingestion dispatch", () => {

@@ -1,0 +1,15 @@
+version: 2
+
+models:
+  - name: dim_coins
+    columns:
+      - name: coin_id
+        tests:
+          - not_null
+          - unique
+  - name: dim_asset_platforms
+    columns:
+      - name: asset_platform_id
+        tests:
+          - not_null
+          - unique

@@ -19,6 +19,10 @@ coverage/
 
 # Local tooling
 .codegraph/
+transforms/.dbt/
+transforms/target/
+transforms/dbt_packages/
+transforms/logs/
 
 # Local public CSV downloads
 data/csv/*
