@@ -2,16 +2,19 @@
 id: task-0031
 title: "Phase 6: add transform profile and CLI helpers"
 type: task
-status: ready
+status: done
 assigned_to: worker
 created_by: human
 created_on: 2026-07-09
-updated_on: 2026-07-09
+updated_on: 2026-07-10
 priority: normal
 parent: ""
 depends_on:
   - task-0030
 ---
+
+
+
 
 # Task
 
@@ -66,4 +69,3 @@ Add project-local dbt profile generation and thin transform CLI helpers.
 - [ ] `npm test` passes.
 
 ## Notes
-

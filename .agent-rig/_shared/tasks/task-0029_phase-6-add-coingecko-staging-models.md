@@ -2,16 +2,21 @@
 id: task-0029
 title: "Phase 6: add CoinGecko staging models"
 type: task
-status: ready
+status: done
 assigned_to: worker
 created_by: human
 created_on: 2026-07-09
-updated_on: 2026-07-09
+updated_on: 2026-07-10
 priority: normal
 parent: ""
 depends_on:
   - task-0028
 ---
+
+
+
+
+
 
 # Task
 
@@ -66,3 +71,8 @@ Add dbt source declarations and staging views for CoinGecko `coins_list` and `as
 
 ## Notes
 
+- Reviewer 2026-07-10 (codex):
+  - Root cause: `stg_coingecko__asset_platforms` aliases the warehouse raw `id` column to `asset_platform_id`, while the typed CoinGecko id extracted from `payload_jsonb` is exposed as `platform_id`. The schema test then enforces `not_null` and `unique` on the raw warehouse id instead of the staging key described by the task.
+  - Expected: the staging key should be the stable typed CoinGecko platform id extracted from `payload_jsonb`, with the raw warehouse identity preserved separately when useful.
+  - Actual: [transforms/models/staging/coingecko/stg_coingecko__asset_platforms.sql](/Users/inotives/workspaces/market-pipe/transforms/models/staging/coingecko/stg_coingecko__asset_platforms.sql:2) sets `asset_platform_id` from raw `id`, and [transforms/models/staging/coingecko/_coingecko__models.yml](/Users/inotives/workspaces/market-pipe/transforms/models/staging/coingecko/_coingecko__models.yml:19) tests that raw id column.
+  - Smallest fix: rename the extracted `payload_jsonb ->> 'id'` column to the staging key name you want to guarantee (`asset_platform_id` is the obvious choice), keep the raw warehouse id under a separate `raw_*` name, and update [tests/dbt-staging.test.js](/Users/inotives/workspaces/market-pipe/tests/dbt-staging.test.js:25) so it asserts the schema test is attached to the typed key rather than the raw row id.
