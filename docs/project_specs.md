@@ -520,21 +520,22 @@ Adding a future source should usually mean:
 
 Do not add provider-specific conditionals to root CLI code.
 
-### Phase 7 - Production Scheduling
+### Phase 7 - Source-Owned dbt Relation Naming
 
 Deliverables:
 
-- `scripts/run-hourly.sh`.
-- `scripts/run-daily.sh`.
-- systemd service and timer units.
-- deployment notes.
-- log inspection runbook.
+- Replace Phase 6 generic dbt output names with source-owned relation names.
+- Rename CoinGecko staging model identities to `stg__coins_list` and `stg__asset_platforms_list`.
+- Rename CoinGecko mart model identities to `mart__coins_list` and `mart__asset_platforms_list`.
+- Materialize those models into the `coingecko` schema.
+- Update docs and tests to use the new source-owned contract.
 
 Acceptance:
 
-- `systemctl status` shows timer state.
-- `journalctl -u <service>` shows job logs.
-- Manual CLI runs and timer runs use the same commands.
+- `coingecko.stg__coins_list` and `coingecko.stg__asset_platforms_list` exist after `dbt run`.
+- `coingecko.mart__coins_list` and `coingecko.mart__asset_platforms_list` exist after `dbt run`.
+- The old `staging.*` and `marts.*` contract is removed from docs and tests.
+- Direct `dbt run` and `dbt test` succeed with the renamed models.
 
 ## Migration From Existing Project
 

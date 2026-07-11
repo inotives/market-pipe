@@ -1,37 +1,63 @@
-# Phase 7 - Production Scheduling
+# Phase 7 - Source-Owned dbt Relation Naming
 
 ## Purpose
 
-Make production execution boring: scripts and systemd timers call the same CLI commands humans and agents use.
+Replace the generic dbt output contract from Phase 6 with source-owned relation names.
 
-Scheduling should not introduce a second execution path.
+Phase 6 proved the dbt runtime and CoinGecko-first transform slice, but it landed output relations in generic schemas:
+
+```text
+staging.stg_coingecko__*
+marts.dim_*
+```
+
+That contract is not the long-term warehouse shape. This phase corrects it to source-owned naming so raw, staging, and marts for a source stay together:
+
+```text
+coingecko.raw_coingecko__<entity>
+coingecko.stg__<entity>
+coingecko.mart__<entity>
+```
+
+This is the default dbt output pattern for future sources unless a later phase explicitly overrides it.
 
 ## Scope
 
-- `scripts/run-hourly.sh`.
-- `scripts/run-daily.sh`.
-- systemd service and timer units.
-- Deployment notes.
-- Log inspection runbook.
-- Environment variable documentation for production runs.
+- Update the Phase 6 CoinGecko dbt output contract.
+- Rename staging model identities to `stg__<entity>`.
+- Rename mart model identities to `mart__<entity>`.
+- Materialize staging and mart views into the source-owned `coingecko` schema.
+- Keep raw sources unchanged in `coingecko.raw_coingecko__<entity>`.
+- Update docs and tests to use the new relation names.
+- Establish the source-owned schema pattern as the default for future dbt-enabled sources.
 
 ## Out Of Scope
 
-- Queue workers.
-- Alerting service.
-- Web dashboard.
-- Custom scheduler inside the application.
-- n8n-specific workflow definitions.
+- Python migration.
+- New CoinGecko entities beyond the current Phase 6 slice.
+- Alpha Vantage, Custom CSV, or Agent Local dbt models.
+- Compatibility views for the old `staging.*` and `marts.*` names.
+- Intermediate models.
+- Incremental models.
+- Persisted table materializations.
+- Production scheduling.
 
 ## Acceptance Signals
 
-- `systemctl status` shows timer state.
-- `journalctl -u <service>` shows job logs.
-- Manual CLI runs and timer runs use the same commands.
-- Deployment notes are enough for a fresh production install.
+- dbt staging relations land as:
+  - `coingecko.stg__coins_list`
+  - `coingecko.stg__asset_platforms_list`
+- dbt mart relations land as:
+  - `coingecko.mart__coins_list`
+  - `coingecko.mart__asset_platforms_list`
+- Internal dbt model names and `ref()` calls use the new `stg__*` and `mart__*` identities.
+- The old generic-schema contract is removed from docs and tests.
+- `dbt run --project-dir transforms --profiles-dir transforms/.dbt` builds the renamed models successfully.
+- `dbt test --project-dir transforms --profiles-dir transforms/.dbt` runs the renamed model tests successfully.
+- The opt-in dbt smoke path verifies the four new `coingecko.*` relations directly.
+- `npm run typecheck` passes.
+- `npm test` passes.
 
 ## Open Decisions
 
-- Which commands belong in hourly versus daily scripts?
-- Should production use compiled JavaScript or `tsx`?
-- What is the minimum log format needed before adding alerting?
+- None for implementation.

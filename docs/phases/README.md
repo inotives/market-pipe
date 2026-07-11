@@ -12,7 +12,7 @@ The phase docs are not worker tickets. They define project sequencing, scope bou
 4. [Custom CSV](phase-04-custom-csv.md)
 5. [Agent Local Datastore](phase-05-agent-local-datastore.md)
 6. [dbt Transforms](phase-06-dbt-transforms.md)
-7. [Production Scheduling](phase-07-production-scheduling.md)
+7. [Source-Owned dbt Relation Naming](phase-07-production-scheduling.md)
 
 ## Planning Rules
 
