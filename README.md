@@ -310,12 +310,17 @@ Use a date within the past 365 days for CoinGecko demo/public API keys when runn
 
 dbt runtime notes:
 
-- `dbt` is an external CLI dependency for Phase 6 transforms; it is not installed through `npm`.
+- `dbt` is an external CLI dependency for transforms; it is not installed through `npm`.
 - Install the recommended adapter with `python -m pip install dbt-postgres`.
 - For an isolated project-local install, use `UV_CACHE_DIR=.uv-cache python3 -m uv venv .venv-dbt`, then `.venv-dbt/bin/python -m ensurepip --upgrade`, then `.venv-dbt/bin/python -m pip install dbt-postgres`, and prepend `.venv-dbt/bin` to `PATH` when running dbt commands.
 - Generate the project-local profile with `market-pipe transform profile`.
 - Direct commands use the project-local profile directory: `dbt run --project-dir transforms --profiles-dir transforms/.dbt` and `dbt test --project-dir transforms --profiles-dir transforms/.dbt`.
 - Convenience helpers mirror those direct commands: `market-pipe transform profile`, `market-pipe transform run`, and `market-pipe transform test`.
+- The current CoinGecko dbt contract materializes these views:
+  - `coingecko.stg__coins_list`
+  - `coingecko.stg__asset_platforms_list`
+  - `coingecko.mart__coins_list`
+  - `coingecko.mart__asset_platforms_list`
 - Opt-in dbt smoke coverage uses deterministic raw CoinGecko rows and runs only when both `MARKET_PIPE__RUN_DB_TESTS=1` and `MARKET_PIPE__RUN_DBT_SMOKE=1` are set and `dbt` is installed.
 
 Opt-in dbt smoke:
@@ -324,7 +329,7 @@ Opt-in dbt smoke:
 MARKET_PIPE__RUN_DB_TESTS=1 MARKET_PIPE__RUN_DBT_SMOKE=1 npm test
 ```
 
-Manual Phase 6 dbt flow:
+Manual dbt flow:
 
 ```bash
 npm run market-pipe -- transform profile

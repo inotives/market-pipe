@@ -10,8 +10,14 @@ test("dbt scaffold configures the market_pipe project", () => {
   assert.equal(project.profile, "market_pipe");
   assert.deepEqual(project["model-paths"], ["models"]);
   assert.equal(project.models.market_pipe["+materialized"], "view");
-  assert.equal(project.models.market_pipe.staging["+schema"], "staging");
-  assert.equal(project.models.market_pipe.marts["+schema"], "marts");
+  assert.deepEqual(project["on-run-start"], [
+    "drop view if exists staging.stg_coingecko__coins_list cascade",
+    "drop view if exists staging.stg_coingecko__asset_platforms cascade",
+    "drop view if exists marts.dim_coins cascade",
+    "drop view if exists marts.dim_asset_platforms cascade",
+  ]);
+  assert.equal(project.models.market_pipe.staging.coingecko["+schema"], "coingecko");
+  assert.equal(project.models.market_pipe.marts.coingecko["+schema"], "coingecko");
 });
 
 test("repo ignores local dbt runtime artifacts", () => {

@@ -2,7 +2,7 @@
 id: task-0034
 title: "Phase 7: rename CoinGecko mart models and refs to source-owned relations"
 type: task
-status: ready
+status: done
 assigned_to: worker
 created_by: human
 created_on: 2026-07-11
@@ -12,6 +12,9 @@ parent: ""
 depends_on:
   - task-0033
 ---
+
+
+
 
 # Task
 
@@ -65,3 +68,16 @@ Rename the CoinGecko mart dbt models and refs to the new source-owned contract a
 - [ ] `npm test` passes.
 
 ## Notes
+
+- Worker validation:
+  - `npm run typecheck`
+  - `npm test`
+  - `PATH="$PWD/.venv-dbt/bin:$PATH" MARKET_PIPE__RUN_DB_TESTS=1 MARKET_PIPE__RUN_DBT_SMOKE=1 npm test`
+- Result:
+  - The mart dbt model identities are now `mart__coins_list` and `mart__asset_platforms_list`.
+  - The dbt project now drops legacy `marts.dim_coins` and `marts.dim_asset_platforms` views on run start.
+  - Opt-in smoke proved the Phase 7 mart contract break end-to-end:
+    - `coingecko.mart__coins_list` exists
+    - `coingecko.mart__asset_platforms_list` exists
+    - `marts.dim_coins` does not resolve after `dbt run`
+    - `marts.dim_asset_platforms` does not resolve after `dbt run`

@@ -2,7 +2,7 @@
 id: task-0033
 title: "Phase 7: rename CoinGecko staging models to source-owned relations"
 type: task
-status: ready
+status: done
 assigned_to: worker
 created_by: human
 created_on: 2026-07-11
@@ -11,6 +11,12 @@ priority: normal
 parent: ""
 depends_on: []
 ---
+
+
+
+
+
+
 
 # Task
 
@@ -68,3 +74,16 @@ Rename the CoinGecko staging dbt models to the new source-owned contract and mak
 - [ ] `npm test` passes.
 
 ## Notes
+
+- Worker validation:
+  - `npm run typecheck`
+  - `npm test`
+  - `PATH="$PWD/.venv-dbt/bin:$PATH" MARKET_PIPE__RUN_DB_TESTS=1 MARKET_PIPE__RUN_DBT_SMOKE=1 npm test`
+- Result:
+  - The dbt project now drops legacy `staging.stg_coingecko__coins_list` and `staging.stg_coingecko__asset_platforms` views on run start.
+  - Opt-in smoke proved the Phase 7 contract break end-to-end:
+    - `coingecko.stg__coins_list` exists
+    - `coingecko.stg__asset_platforms_list` exists
+    - `staging.stg_coingecko__coins_list` does not resolve after `dbt run`
+    - `staging.stg_coingecko__asset_platforms` does not resolve after `dbt run`
+  - Existing marts still materialize as `marts.dim_*` and are intentionally left for `task-0034`.

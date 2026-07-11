@@ -15,8 +15,8 @@ test("dbt staging sources declare the two CoinGecko raw tables", () => {
 });
 
 test("dbt staging models read from explicit CoinGecko sources", () => {
-  const coinsSql = readFileSync("transforms/models/staging/coingecko/stg_coingecko__coins_list.sql", "utf8");
-  const platformsSql = readFileSync("transforms/models/staging/coingecko/stg_coingecko__asset_platforms.sql", "utf8");
+  const coinsSql = readFileSync("transforms/models/staging/coingecko/stg__coins_list.sql", "utf8");
+  const platformsSql = readFileSync("transforms/models/staging/coingecko/stg__asset_platforms_list.sql", "utf8");
 
   assert.match(coinsSql, /source\('coingecko', 'raw_coingecko__coins_list'\)/);
   assert.match(platformsSql, /source\('coingecko', 'raw_coingecko__asset_platforms_list'\)/);
@@ -28,6 +28,8 @@ test("dbt staging schema tests protect CoinGecko keys", () => {
   const spec = parse(readFileSync("transforms/models/staging/coingecko/_coingecko__models.yml", "utf8"));
   const [coinsModel, platformsModel] = spec.models;
 
+  assert.equal(coinsModel.name, "stg__coins_list");
+  assert.equal(platformsModel.name, "stg__asset_platforms_list");
   assert.equal(coinsModel.columns[0].name, "coin_id");
   assert.equal(platformsModel.columns[0].name, "asset_platform_id");
   assert.deepEqual(coinsModel.columns[0].tests, ["not_null", "unique"]);

@@ -19,7 +19,7 @@ test("default test suite skips dbt smoke when opt-in gates or dbt are unavailabl
 });
 
 test(
-  "opt-in dbt smoke runs direct dbt commands and queries staging and mart views",
+  "opt-in dbt smoke runs direct dbt commands, queries renamed views, and removes legacy staging and mart views",
   { skip: !dbtSmokeEnabled || !dbtAvailable },
   async () => {
     await bootstrapDatabase();
@@ -32,8 +32,18 @@ test(
     const client = new pg.Client({ connectionString });
     await client.connect();
     try {
+      await client.query("create schema if not exists staging");
+      await client.query("create schema if not exists marts");
+      await client.query("drop view if exists staging.stg_coingecko__coins_list cascade");
+      await client.query("drop view if exists staging.stg_coingecko__asset_platforms cascade");
+      await client.query("drop view if exists marts.dim_coins cascade");
+      await client.query("drop view if exists marts.dim_asset_platforms cascade");
       await client.query("truncate table coingecko.raw_coingecko__coins_list");
       await client.query("truncate table coingecko.raw_coingecko__asset_platforms_list");
+      await client.query("create view staging.stg_coingecko__coins_list as select 'legacy'::text as coin_id");
+      await client.query("create view staging.stg_coingecko__asset_platforms as select 'legacy'::text as asset_platform_id");
+      await client.query("create view marts.dim_coins as select 'legacy'::text as coin_id");
+      await client.query("create view marts.dim_asset_platforms as select 'legacy'::text as asset_platform_id");
 
       await client.query(
         `
@@ -88,7 +98,7 @@ test(
     try {
       const stagingCoins = await verify.query(`
         select coin_id, symbol, name
-        from staging.stg_coingecko__coins_list
+        from coingecko.stg__coins_list
         where coin_id in ('market-pipe-dbt-bitcoin', 'market-pipe-dbt-ethereum')
         order by coin_id
       `);
@@ -96,15 +106,26 @@ test(
 
       const stagingPlatforms = await verify.query(`
         select asset_platform_id, chain_identifier, name
-        from staging.stg_coingecko__asset_platforms
+        from coingecko.stg__asset_platforms_list
         where asset_platform_id in ('market-pipe-dbt-ethereum', 'market-pipe-dbt-polygon-pos')
         order by asset_platform_id
       `);
       assert.deepEqual(stagingPlatforms.rows.map((row) => row.asset_platform_id), ["market-pipe-dbt-ethereum", "market-pipe-dbt-polygon-pos"]);
 
+      const legacyViews = await verify.query(`
+        select to_regclass('staging.stg_coingecko__coins_list') as legacy_coins,
+               to_regclass('staging.stg_coingecko__asset_platforms') as legacy_platforms,
+               to_regclass('marts.dim_coins') as legacy_mart_coins,
+               to_regclass('marts.dim_asset_platforms') as legacy_mart_platforms
+      `);
+      assert.equal(legacyViews.rows[0].legacy_coins, null);
+      assert.equal(legacyViews.rows[0].legacy_platforms, null);
+      assert.equal(legacyViews.rows[0].legacy_mart_coins, null);
+      assert.equal(legacyViews.rows[0].legacy_mart_platforms, null);
+
       const martCoins = await verify.query(`
         select coin_id, symbol, name
-        from marts.dim_coins
+        from coingecko.mart__coins_list
         where coin_id in ('market-pipe-dbt-bitcoin', 'market-pipe-dbt-ethereum')
         order by coin_id
       `);
@@ -112,7 +133,7 @@ test(
 
       const martPlatforms = await verify.query(`
         select asset_platform_id, chain_identifier, name
-        from marts.dim_asset_platforms
+        from coingecko.mart__asset_platforms_list
         where asset_platform_id in ('market-pipe-dbt-ethereum', 'market-pipe-dbt-polygon-pos')
         order by asset_platform_id
       `);
