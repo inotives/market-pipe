@@ -8,13 +8,13 @@ sources:
       - name: raw_coingecko__asset_platforms_list
 
 models:
-  - name: stg_coingecko__coins_list
+  - name: stg__coins_list
     columns:
       - name: coin_id
         tests:
           - not_null
           - unique
-  - name: stg_coingecko__asset_platforms
+  - name: stg__asset_platforms_list
     columns:
       - name: asset_platform_id
         tests:

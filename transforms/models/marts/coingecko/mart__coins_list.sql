@@ -9,4 +9,4 @@ select
   raw_updated_at,
   raw_deleted_at,
   raw_payload_jsonb
-from {{ ref('stg_coingecko__coins_list') }}
+from {{ ref('stg__coins_list') }}

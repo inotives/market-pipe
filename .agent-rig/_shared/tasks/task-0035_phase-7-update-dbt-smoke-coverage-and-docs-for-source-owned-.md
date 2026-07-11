@@ -2,7 +2,7 @@
 id: task-0035
 title: "Phase 7: update dbt smoke coverage and docs for source-owned relations"
 type: task
-status: ready
+status: done
 assigned_to: worker
 created_by: human
 created_on: 2026-07-11
@@ -12,6 +12,9 @@ parent: ""
 depends_on:
   - task-0034
 ---
+
+
+
 
 # Task
 
@@ -61,3 +64,17 @@ Update the dbt smoke path, README, and task notes so the repo proves and documen
 - [ ] `npm test` passes.
 
 ## Notes
+
+- Worker validation:
+  - `npm run typecheck`
+  - `npm test`
+  - `PATH="$PWD/.venv-dbt/bin:$PATH" MARKET_PIPE__RUN_DB_TESTS=1 MARKET_PIPE__RUN_DBT_SMOKE=1 npm test`
+- Result:
+  - Default `npm test` still skips the dbt smoke path when the dbt/Postgres gates are not enabled.
+  - The opt-in smoke test verified all four renamed relations directly:
+    - `coingecko.stg__coins_list`
+    - `coingecko.stg__asset_platforms_list`
+    - `coingecko.mart__coins_list`
+    - `coingecko.mart__asset_platforms_list`
+  - The same smoke also proved the legacy generic-schema views are removed after `dbt run`.
+  - Successful opt-in run summary: `tests 103`, `pass 100`, `fail 0`, `skipped 3`.

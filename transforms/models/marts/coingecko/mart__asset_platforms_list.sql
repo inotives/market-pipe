@@ -11,4 +11,4 @@ select
   raw_updated_at,
   raw_deleted_at,
   raw_payload_jsonb
-from {{ ref('stg_coingecko__asset_platforms') }}
+from {{ ref('stg__asset_platforms_list') }}

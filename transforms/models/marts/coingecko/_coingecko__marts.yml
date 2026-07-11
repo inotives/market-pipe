@@ -1,13 +1,13 @@
 version: 2
 
 models:
-  - name: dim_coins
+  - name: mart__coins_list
     columns:
       - name: coin_id
         tests:
           - not_null
           - unique
-  - name: dim_asset_platforms
+  - name: mart__asset_platforms_list
     columns:
       - name: asset_platform_id
         tests:
