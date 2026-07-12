@@ -13,6 +13,7 @@ The phase docs are not worker tickets. They define project sequencing, scope bou
 5. [Agent Local Datastore](phase-05-agent-local-datastore.md)
 6. [dbt Transforms](phase-06-dbt-transforms.md)
 7. [Source-Owned dbt Relation Naming](phase-07-production-scheduling.md)
+8. [Generated Host Cron](phase-08-generated-host-cron.md)
 
 ## Planning Rules
 

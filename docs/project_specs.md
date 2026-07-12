@@ -537,6 +537,29 @@ Acceptance:
 - The old `staging.*` and `marts.*` contract is removed from docs and tests.
 - Direct `dbt run` and `dbt test` succeed with the renamed models.
 
+### Phase 8 - Generated Host Cron
+
+Deliverables:
+
+- Add `market-pipe schedule cron render --bin <absolute-market-pipe-path> --output <path>`.
+- Support optional `--env-file <path>` and `--log-dir <path>` render flags.
+- Scan all feature `config.yaml` files and include any schedulable item with valid schedule metadata plus runnable `cliArgs`.
+- Keep `type: hourly | daily | manual`, `minute`, and `timeUtc` as the cadence contract.
+- Add `cliArgs: string[]` to scheduled config items so generated cron commands are fully runnable.
+- Render one cron line per scheduled item.
+- Render one hourly and one daily `market-pipe transform run` cron entry at `+10 minutes` after the latest source job for that cadence.
+- Commit example cron artifacts under `ops/cron/`.
+- Add opt-in Linux Docker proof for cron artifact installation and command execution.
+
+Acceptance:
+
+- `market-pipe schedule cron render` produces deterministic output.
+- `manual` items are excluded from generated cron.
+- Invalid schedule metadata fails clearly.
+- Current `coingecko` schedule metadata renders valid hourly and daily cron entries.
+- Future features are included automatically once their config includes valid schedule metadata plus runnable `cliArgs`.
+- The Docker smoke path proves the generated artifact installs and executes under Linux cron assumptions.
+
 ## Migration From Existing Project
 
 Reuse the ideas, not the Python implementation.
