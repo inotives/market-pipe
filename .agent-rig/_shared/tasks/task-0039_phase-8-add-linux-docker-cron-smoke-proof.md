@@ -2,7 +2,7 @@
 id: task-0039
 title: "Phase 8: add Linux Docker cron smoke proof"
 type: task
-status: ready
+status: done
 assigned_to: worker
 created_by: human
 created_on: 2026-07-12
@@ -11,7 +11,13 @@ priority: normal
 parent: ""
 depends_on:
   - task-0038
+message: "Reviewed: default tests stay Docker-free, and the opt-in Linux Docker
+  cron smoke renders, installs, verifies, and executes representative commands
+  successfully."
 ---
+
+
+
 
 # Task
 
@@ -54,13 +60,32 @@ Add an opt-in Docker-based Linux smoke test for cron artifact installation and r
 
 ## Acceptance Criteria
 
-- [ ] Default `npm test` does not require Docker.
-- [ ] The opt-in Docker smoke renders the cron artifact locally and validates it under Linux.
-- [ ] The smoke proves the cron file installs successfully in the container.
-- [ ] The smoke verifies expected installed cron lines.
-- [ ] The smoke runs representative rendered commands successfully inside the Linux container.
-- [ ] Repo docs include the exact opt-in Docker smoke command.
-- [ ] Task notes include one successful opt-in Docker validation run summary.
-- [ ] `npm run typecheck` passes.
-- [ ] `npm test` passes.
+- [x] Default `npm test` does not require Docker.
+- [x] The opt-in Docker smoke renders the cron artifact locally and validates it under Linux.
+- [x] The smoke proves the cron file installs successfully in the container.
+- [x] The smoke verifies expected installed cron lines.
+- [x] The smoke runs representative rendered commands successfully inside the Linux container.
+- [x] Repo docs include the exact opt-in Docker smoke command.
+- [x] Task notes include one successful opt-in Docker validation run summary.
+- [x] `npm run typecheck` passes.
+- [x] `npm test` passes.
 
+## Notes
+
+- Added `tests/docker-cron-smoke.test.js` with an opt-in gate at `MARKET_PIPE__RUN_DOCKER_CRON_SMOKE=1`.
+- The smoke flow:
+  - renders the cron artifact locally from `dist/cli.js`
+  - mounts the rendered file plus a stub absolute `market-pipe` binary into a Linux `node:22-bookworm` container
+  - installs `cron` in-container
+  - installs the rendered file with `crontab`
+  - verifies expected installed cron lines
+  - executes representative rendered commands extracted from the cron file itself
+- Updated `README.md` and `docs/phases/phase-08-generated-host-cron.md` with the exact opt-in Docker smoke command.
+- Successful opt-in Docker validation run:
+  - command: `MARKET_PIPE__RUN_DOCKER_CRON_SMOKE=1 npm test`
+  - result: `opt-in Docker cron smoke renders, installs, verifies, and executes representative cron commands under Linux` passed in `47757.839833ms`
+  - suite summary: `tests 112`, `pass 96`, `fail 0`, `skipped 16`
+- Verification:
+  - `npm run typecheck`
+  - `npm test`
+  - `MARKET_PIPE__RUN_DOCKER_CRON_SMOKE=1 npm test`

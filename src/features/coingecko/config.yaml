@@ -10,6 +10,11 @@ endpoints:
     schedule:
       type: daily
       timeUtc: "00:30:00"
+      cliArgs:
+        - coingecko
+        - run
+        - --entity
+        - asset_platforms_list
   - entity: trending_search
     endpoint: /search/trending
     table: coingecko.raw_coingecko__trending_search
@@ -17,6 +22,11 @@ endpoints:
     schedule:
       type: daily
       timeUtc: "01:00:00"
+      cliArgs:
+        - coingecko
+        - run
+        - --entity
+        - trending_search
   - entity: crypto_global
     endpoint: /global
     table: coingecko.raw_coingecko__crypto_global
@@ -24,6 +34,11 @@ endpoints:
     schedule:
       type: hourly
       minute: 10
+      cliArgs:
+        - coingecko
+        - run
+        - --entity
+        - crypto_global
   - entity: derivatives_exchanges
     endpoint: /derivatives/exchanges
     table: coingecko.raw_coingecko__derivatives_exchanges
@@ -31,6 +46,11 @@ endpoints:
     schedule:
       type: daily
       timeUtc: "01:30:00"
+      cliArgs:
+        - coingecko
+        - run
+        - --entity
+        - derivatives_exchanges
   - entity: exchanges
     endpoint: /exchanges
     table: coingecko.raw_coingecko__exchanges
@@ -38,6 +58,11 @@ endpoints:
     schedule:
       type: daily
       timeUtc: "02:00:00"
+      cliArgs:
+        - coingecko
+        - run
+        - --entity
+        - exchanges
   - entity: coins_categories
     endpoint: /coins/categories
     table: coingecko.raw_coingecko__coins_categories

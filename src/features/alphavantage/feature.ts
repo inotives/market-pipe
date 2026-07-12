@@ -60,6 +60,7 @@ export function getAlphaVantageEndpoint(entity: string): AlphaVantageEndpoint {
 
 export const alphaVantageFeature = {
   slug: "alphavantage",
+  loadConfig: loadAlphaVantageConfig,
   registerCommands(program: Command): void {
     registerAlphaVantageCommands(program);
   },

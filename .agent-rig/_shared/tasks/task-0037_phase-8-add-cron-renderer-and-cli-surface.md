@@ -2,7 +2,7 @@
 id: task-0037
 title: "Phase 8: add cron renderer and CLI surface"
 type: task
-status: ready
+status: done
 assigned_to: worker
 created_by: human
 created_on: 2026-07-12
@@ -11,7 +11,15 @@ priority: normal
 parent: ""
 depends_on:
   - task-0036
+message: "Reviewed: cron renderer CLI and deterministic output pass, and late
+  daily transform wraparound now fails explicitly with regression coverage."
 ---
+
+
+
+
+
+
 
 # Task
 
@@ -62,13 +70,30 @@ Implement `market-pipe schedule cron render` and the deterministic cron renderin
 
 ## Acceptance Criteria
 
-- [ ] `market-pipe schedule cron render --bin <path> --output <path>` writes a cron artifact.
-- [ ] Optional `--env-file` and `--log-dir` flags are supported in rendered commands.
-- [ ] One cron line is rendered per scheduled config item.
-- [ ] `manual` items are omitted.
-- [ ] Hourly and daily transform jobs are rendered at the derived `+10 minute` offsets.
-- [ ] Invalid schedule metadata fails render with a non-zero exit.
-- [ ] Renderer output is deterministic.
-- [ ] `npm run typecheck` passes.
-- [ ] `npm test` passes.
+- [x] `market-pipe schedule cron render --bin <path> --output <path>` writes a cron artifact.
+- [x] Optional `--env-file` and `--log-dir` flags are supported in rendered commands.
+- [x] One cron line is rendered per scheduled config item.
+- [x] `manual` items are omitted.
+- [x] Hourly and daily transform jobs are rendered at the derived `+10 minute` offsets.
+- [x] Invalid schedule metadata fails render with a non-zero exit.
+- [x] Renderer output is deterministic.
+- [x] `npm run typecheck` passes.
+- [x] `npm test` passes.
 
+## Notes
+
+- Reviewer return 2026-07-12:
+  - `src/schedule/renderer.ts` derives the daily transform job with `(latest + 10) % 1440`, which wraps a late source like `23:55` to `00:05`. Repro: `renderCronArtifact()` with one daily source at `23:55:00` renders `transform run` before the source line. That violates the intended "`+10 minutes after the latest source job`" behavior for late-day schedules. Add a failing test for the wraparound case and decide the contract explicitly instead of silently wrapping.
+- Reviewer fix 2026-07-12:
+  - Decided the contract explicitly: daily transform render now fails if the latest daily source is later than `23:50:00` UTC, because a five-field cron entry cannot run `+10 minutes after` without crossing into the next day.
+  - Added a regression test in `tests/schedule.test.js` for a `23:55:00` daily source and updated `src/schedule/renderer.ts` to throw `daily transform cron cannot be scheduled +10 minutes after a source later than 23:50 UTC`.
+- Added root command registration in `src/schedule/cli.ts` and `src/cli.ts` for `market-pipe schedule cron render`.
+- Added `src/schedule/renderer.ts` to gather schedulable config items from registered feature loaders, render plain five-field cron lines, prepend `CRON_TZ=UTC`, and derive hourly/daily `transform run` jobs at `+10 minutes`.
+- Kept the feature seam small by adding optional `loadConfig` hooks to config-backed features; the renderer scans those loaders generically instead of branching on feature names.
+- Enforced renderer-only validation for five-field cron compatibility by failing daily schedules with non-zero seconds.
+- Added coverage in `tests/cli.test.js` and `tests/schedule.test.js` for artifact writing, deterministic ordering, `manual` omission, invalid schedule failure, and derived transform timing.
+- Verification:
+  - `npm run build --silent`
+  - `node --test tests/schedule.test.js`
+  - `npm run typecheck`
+  - `npm test`

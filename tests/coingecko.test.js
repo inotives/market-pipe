@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import { parse } from "yaml";
-import { loadCoinGeckoConfig } from "../dist/features/coingecko/feature.js";
+import { loadCoinGeckoConfig, validateCoinGeckoConfig } from "../dist/features/coingecko/feature.js";
 import { validateCoinGeckoPayload } from "../dist/features/coingecko/runner.js";
 import { validateCoinsListRow } from "../dist/features/coingecko/schemas.js";
 
@@ -31,7 +31,53 @@ test("CoinGecko config contains Phase 2 entity metadata", () => {
   assert.deepEqual(raw.endpoints.find((endpoint) => endpoint.entity === "crypto_global").schedule, {
     type: "hourly",
     minute: 10,
+    cliArgs: ["coingecko", "run", "--entity", "crypto_global"],
   });
+
+  assert.deepEqual(loadCoinGeckoConfig().endpoints.find((endpoint) => endpoint.entity === "coins_categories")?.schedule, {
+    type: "manual",
+  });
+});
+
+test("CoinGecko scheduled endpoints require runnable cliArgs", () => {
+  assert.throws(
+    () =>
+      validateCoinGeckoConfig({
+        endpoints: [
+          {
+            entity: "crypto_global",
+            endpoint: "/global",
+            table: "coingecko.raw_coingecko__crypto_global",
+            idField: "global",
+            schedule: {
+              type: "hourly",
+              minute: 10,
+            },
+          },
+        ],
+      }),
+    /CoinGecko endpoint crypto_global scheduled config must contain cliArgs/,
+  );
+
+  assert.throws(
+    () =>
+      validateCoinGeckoConfig({
+        endpoints: [
+          {
+            entity: "trending_search",
+            endpoint: "/search/trending",
+            table: "coingecko.raw_coingecko__trending_search",
+            idField: "derived",
+            schedule: {
+              type: "daily",
+              timeUtc: "25:00:00",
+              cliArgs: ["coingecko", "run", "--entity", "trending_search"],
+            },
+          },
+        ],
+      }),
+    /CoinGecko endpoint trending_search daily schedule must contain timeUtc in HH:MM:SS format/,
+  );
 });
 
 test("coins_list validation accepts identity fields and preserves extra payload", () => {

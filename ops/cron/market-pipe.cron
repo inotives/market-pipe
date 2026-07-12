@@ -1,0 +1,8 @@
+CRON_TZ=UTC
+10 * * * * /usr/local/bin/market-pipe coingecko run --entity crypto_global
+20 * * * * /usr/local/bin/market-pipe transform run
+30 0 * * * /usr/local/bin/market-pipe coingecko run --entity asset_platforms_list
+0 1 * * * /usr/local/bin/market-pipe coingecko run --entity trending_search
+30 1 * * * /usr/local/bin/market-pipe coingecko run --entity derivatives_exchanges
+0 2 * * * /usr/local/bin/market-pipe coingecko run --entity exchanges
+10 2 * * * /usr/local/bin/market-pipe transform run
