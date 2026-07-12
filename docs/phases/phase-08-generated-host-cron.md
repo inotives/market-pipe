@@ -48,6 +48,7 @@ Rules:
   - `market-pipe transform run`
 - Cron syntax stays plain five-field cron for portability.
 - Cron runs in UTC.
+- Daily transform derivation fails instead of wrapping if the latest daily source is later than `23:50:00` UTC.
 
 `coingecko` works immediately because its scheduled units are already self-contained once `cliArgs` is added. Other features are included only when their config fully describes the runnable command. This avoids feature-specific scheduler code for partial configs such as file-driven or project-driven commands.
 
@@ -76,6 +77,12 @@ Rules:
   - installing it inside a Linux container with cron available
   - verifying the installed cron lines
   - running representative rendered commands inside the same container
+
+Current opt-in proof command:
+
+```bash
+MARKET_PIPE__RUN_DOCKER_CRON_SMOKE=1 npm test
+```
 
 ## Open Decisions
 

@@ -68,6 +68,7 @@ function sanitizeIdentifier(value: string): string {
 
 export const agentLocalFeature = {
   slug: "agent-local",
+  loadConfig: loadAgentLocalConfig,
   registerCommands(program: Command): void {
     registerAgentLocalCommands(program);
   },

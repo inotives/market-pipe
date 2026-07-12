@@ -3,6 +3,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { type Command } from "commander";
 import { parse } from "yaml";
+import { type FeatureSchedule, validateFeatureSchedule } from "../schedule.js";
 import { registerCoinGeckoCommands } from "./cli.js";
 
 export type CoinGeckoEndpoint = {
@@ -19,7 +20,7 @@ export type CoinGeckoEndpoint = {
   endpoint: string;
   table: `coingecko.raw_coingecko__${string}`;
   idField: string;
-  schedule?: { type: "daily"; timeUtc: string } | { type: "hourly"; minute: number } | { type: "manual" };
+  schedule?: FeatureSchedule;
 };
 
 export type CoinGeckoFeatureConfig = {
@@ -29,18 +30,40 @@ export type CoinGeckoFeatureConfig = {
 const configPath = resolve(dirname(fileURLToPath(import.meta.url)), "config.yaml");
 
 export function loadCoinGeckoConfig(): CoinGeckoFeatureConfig {
-  const config = parse(readFileSync(configPath, "utf8")) as CoinGeckoFeatureConfig;
-  if (!Array.isArray(config.endpoints)) {
+  return validateCoinGeckoConfig(parse(readFileSync(configPath, "utf8")));
+}
+
+export function validateCoinGeckoConfig(config: unknown): CoinGeckoFeatureConfig {
+  if (!config || typeof config !== "object" || Array.isArray(config)) {
+    throw new Error("CoinGecko config must be an object");
+  }
+
+  const candidate = config as { endpoints?: unknown };
+  if (!Array.isArray(candidate.endpoints)) {
     throw new Error("CoinGecko config must contain endpoints");
   }
 
-  for (const endpoint of config.endpoints) {
-    if (!endpoint.entity || !endpoint.endpoint || !endpoint.table || !endpoint.idField) {
+  const endpoints = candidate.endpoints.map((endpoint) => {
+    if (!endpoint || typeof endpoint !== "object" || Array.isArray(endpoint)) {
       throw new Error("Invalid CoinGecko endpoint metadata");
     }
-  }
 
-  return config;
+    const item = endpoint as Record<string, unknown>;
+    if (!item.entity || !item.endpoint || !item.table || !item.idField) {
+      throw new Error("Invalid CoinGecko endpoint metadata");
+    }
+
+    return (
+      item.schedule === undefined
+        ? { ...item }
+        : {
+            ...item,
+            schedule: validateFeatureSchedule(item.schedule, `CoinGecko endpoint ${item.entity}`),
+          }
+    ) as CoinGeckoEndpoint;
+  });
+
+  return { endpoints };
 }
 
 export function getCoinGeckoEndpoint(entity: string): CoinGeckoEndpoint {
@@ -54,6 +77,7 @@ export function getCoinGeckoEndpoint(entity: string): CoinGeckoEndpoint {
 
 export const coingeckoFeature = {
   slug: "coingecko",
+  loadConfig: loadCoinGeckoConfig,
   registerCommands(program: Command): void {
     registerCoinGeckoCommands(program);
   },

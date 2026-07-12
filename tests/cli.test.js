@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
+import { mkdtempSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import { test } from "node:test";
 
 test("prints help for the planned command tree", () => {
@@ -12,7 +14,36 @@ test("prints help for the planned command tree", () => {
   assert.match(output, /alphavantage/);
   assert.match(output, /custom-csv/);
   assert.match(output, /agent-local/);
+  assert.match(output, /schedule/);
   assert.match(output, /transform/);
+});
+
+test("schedule cron render writes a deterministic artifact", () => {
+  const tempDir = mkdtempSync("/tmp/market-pipe-cron-");
+  const outputPath = join(tempDir, "market-pipe.cron");
+
+  const result = spawnSync(
+    "node",
+    ["dist/cli.js", "schedule", "cron", "render", "--bin", "/usr/local/bin/market-pipe", "--output", outputPath],
+    { encoding: "utf8" },
+  );
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /schedule cron render wrote/);
+  assert.equal(
+    readFileSync(outputPath, "utf8"),
+    [
+      "CRON_TZ=UTC",
+      "10 * * * * /usr/local/bin/market-pipe coingecko run --entity crypto_global",
+      "20 * * * * /usr/local/bin/market-pipe transform run",
+      "30 0 * * * /usr/local/bin/market-pipe coingecko run --entity asset_platforms_list",
+      "0 1 * * * /usr/local/bin/market-pipe coingecko run --entity trending_search",
+      "30 1 * * * /usr/local/bin/market-pipe coingecko run --entity derivatives_exchanges",
+      "0 2 * * * /usr/local/bin/market-pipe coingecko run --entity exchanges",
+      "10 2 * * * /usr/local/bin/market-pipe transform run",
+      "",
+    ].join("\n"),
+  );
 });
 
 test("transform profile fails clearly when database config is missing", () => {

@@ -67,6 +67,7 @@ export function getCustomCsvEntity(entity: string): CustomCsvEntityConfig {
 
 export const customCsvFeature = {
   slug: "custom-csv",
+  loadConfig: loadCustomCsvConfig,
   registerCommands(program: Command): void {
     registerCustomCsvCommands(program);
   },

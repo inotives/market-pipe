@@ -292,9 +292,59 @@ Behavior notes:
 4. Custom CSV
 5. Agent Local Datastore
 6. dbt Transforms
-7. Production Scheduling
+7. Source-Owned dbt Relation Naming
+8. Generated Host Cron
 
 See [docs/phases/README.md](docs/phases/README.md).
+
+## Host Cron
+
+Host cron stays outside the app process. The renderer writes plain five-field cron with `CRON_TZ=UTC`, and cron commands are expected to call an installed `market-pipe` binary path rather than `npm run`.
+
+The checked-in seeded artifact is [ops/cron/market-pipe.cron](/Users/inotives/workspaces/market-pipe/ops/cron/market-pipe.cron). Re-render it from the current feature schedule contract with:
+
+```bash
+market-pipe schedule cron render --bin /usr/local/bin/market-pipe --output ops/cron/market-pipe.cron
+```
+
+Inspect the generated artifact before install:
+
+```bash
+cat ops/cron/market-pipe.cron
+crontab -l
+```
+
+Install it explicitly with `crontab` when ready:
+
+```bash
+crontab ops/cron/market-pipe.cron
+crontab -l
+```
+
+Optional render flags are available when the host needs them:
+
+```bash
+market-pipe schedule cron render \
+  --bin /usr/local/bin/market-pipe \
+  --output /etc/cron.d/market-pipe \
+  --env-file /etc/market-pipe.env \
+  --log-dir /var/log/market-pipe
+```
+
+Behavior notes:
+
+- Cron runs in UTC.
+- The checked-in example uses `/usr/local/bin/market-pipe` as the installed binary path.
+- `market-pipe` does not auto-install or mutate crontabs; operators render and install artifacts themselves.
+- Daily transform render fails if the latest daily source job is later than `23:50:00` UTC, because `+10 minutes` would cross into the next day.
+
+Opt-in Linux Docker cron smoke:
+
+```bash
+MARKET_PIPE__RUN_DOCKER_CRON_SMOKE=1 npm test
+```
+
+That smoke re-renders the artifact locally, installs it with `crontab` inside a Linux `node:22-bookworm` container after installing `cron`, verifies expected installed lines, and executes representative rendered commands from the artifact with a stub absolute binary path.
 
 ## Development
 

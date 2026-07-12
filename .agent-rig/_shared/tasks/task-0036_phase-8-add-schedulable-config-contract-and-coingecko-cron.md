@@ -2,7 +2,7 @@
 id: task-0036
 title: "Phase 8: add schedulable config contract and CoinGecko cron metadata"
 type: task
-status: ready
+status: done
 assigned_to: worker
 created_by: human
 created_on: 2026-07-12
@@ -10,7 +10,12 @@ updated_on: 2026-07-12
 priority: normal
 parent: ""
 depends_on: []
+message: "Reviewed: schedule contract adds cliArgs for hourly/daily items,
+  CoinGecko scheduled endpoints are seeded, and typecheck/tests pass."
 ---
+
+
+
 
 # Task
 
@@ -56,11 +61,20 @@ Extend the feature schedule contract to support generated cron and seed `coingec
 
 ## Acceptance Criteria
 
-- [ ] The schedule contract supports `cliArgs: string[]` for schedulable config items.
-- [ ] Invalid non-`manual` schedule items fail validation if they do not provide runnable args.
-- [ ] Current scheduled CoinGecko endpoints include runnable `cliArgs`.
-- [ ] Current manual CoinGecko endpoints remain excluded from scheduling metadata requirements.
-- [ ] No cron renderer or cron CLI is added in this task.
-- [ ] `npm run typecheck` passes.
-- [ ] `npm test` passes.
+- [x] The schedule contract supports `cliArgs: string[]` for schedulable config items.
+- [x] Invalid non-`manual` schedule items fail validation if they do not provide runnable args.
+- [x] Current scheduled CoinGecko endpoints include runnable `cliArgs`.
+- [x] Current manual CoinGecko endpoints remain excluded from scheduling metadata requirements.
+- [x] No cron renderer or cron CLI is added in this task.
+- [x] `npm run typecheck` passes.
+- [x] `npm test` passes.
 
+## Notes
+
+- Added a shared `src/features/schedule.ts` validator for `manual`, `hourly`, and `daily` schedule metadata, with `cliArgs` required only for non-manual schedules.
+- Wired `src/features/coingecko/feature.ts` through that validator and exported `validateCoinGeckoConfig()` so tests can assert failure cases directly.
+- Seeded scheduled CoinGecko endpoints with runnable `coingecko run --entity ...` argument arrays in `src/features/coingecko/config.yaml`.
+- Left unscheduled and `manual` CoinGecko endpoints without runnable metadata requirements.
+- Verification:
+  - `npm run typecheck`
+  - `npm test`
